@@ -1,0 +1,7 @@
+{
+  "module": "person",
+  "version": "0.0.1",
+  "contract": "person",
+  "scope": "own-contract",
+  "commands": []
+}

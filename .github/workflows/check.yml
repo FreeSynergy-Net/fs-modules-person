@@ -1,0 +1,15 @@
+# Copy to <repo>/.github/workflows/check.yml - runs fmt, clippy (pedantic), tests and the coding rules on every push.
+name: check
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    uses: FreeSynergy-Net/fs-release/.github/workflows/check.yml@9eed5c95eb7311f2b68266a012ec778f51e3ac38
+    # with:
+    #   working-directory: "."
+    #   apt-packages: "libssl-dev"

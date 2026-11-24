@@ -17,9 +17,23 @@ use fs_types::BasicValue as _;
 
 const BIN: &str = env!("CARGO_BIN_EXE_fs-person-service");
 
-/// Stops the service the owner started, also when a test fails: asked to stop, then (a service that had a client does not end
-/// on its own, see BERICHT-g4) ended by its pid, found by its socket in the command line.
+/// Stops the service the owner started, also when a test fails, and proves its END (no SIGKILL on the way): after `stop_server`
+/// the process must be gone from `/proc` before the folder is removed. A folder removed under a service that is still ending
+/// makes it hang for good (fs-rpc `heartbeat/server_unix.rs:107-109`, see BERICHT-g4); only then the test kills it and fails.
 struct Stop(PathBuf);
+
+impl Stop {
+    fn pids(&self) -> Vec<std::ffi::OsString> {
+        let want = self.0.to_string_lossy().into_owned();
+        let all = std::fs::read_dir("/proc").unwrap().flatten();
+        all.filter(|e| {
+            let line = std::fs::read(e.path().join("cmdline")).unwrap_or_default();
+            String::from_utf8_lossy(&line).contains(&want)
+        })
+        .map(|e| e.file_name())
+        .collect()
+    }
+}
 
 impl Drop for Stop {
     fn drop(&mut self) {
@@ -27,16 +41,21 @@ impl Drop for Stop {
         let _ =
             std::thread::spawn(move || local(async move { fs_rpc::stop_server(&socket).await }))
                 .join();
-        let want = self.0.to_string_lossy().into_owned();
-        for entry in std::fs::read_dir("/proc").unwrap().flatten() {
-            let line = std::fs::read(entry.path().join("cmdline")).unwrap_or_default();
-            if String::from_utf8_lossy(&line).contains(&want) {
-                let _ = std::process::Command::new("kill")
-                    .arg("-KILL")
-                    .arg(entry.file_name())
-                    .status();
-            }
+        let until = std::time::Instant::now() + Duration::from_secs(5);
+        while !self.pids().is_empty() && std::time::Instant::now() < until {
+            std::thread::sleep(Duration::from_millis(50));
         }
+        let left = self.pids();
+        for pid in &left {
+            let _ = std::process::Command::new("kill")
+                .arg("-KILL")
+                .arg(pid)
+                .status();
+        }
+        assert!(
+            left.is_empty() || std::thread::panicking(),
+            "the service did not end on Control.stop"
+        );
     }
 }
 

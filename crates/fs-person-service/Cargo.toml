@@ -20,15 +20,15 @@ path = "src/main.rs"
 client = ["dep:fs-types", "dep:uuid"]
 
 [dependencies]
-fs-person = { path = "../fs-person" }
+fs-person = { path = "../fs-person", version = "0.0.1" }
 # One source per library, the same as fs-person and the planning module (rev AND version, licence gate).
-fs-rpc = { git = "https://github.com/FreeSynergy-Net/fs-rpc", rev = "0120f9afadf5b74540e8df3f0dfdd1b2edb4e1d4", version = "0.1.4" }
-fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "e6f69213b68b47e139fc8038c8a095f9ed1fef3c", version = "0.2.0" }
-fs-objects = { git = "https://github.com/FreeSynergy-Net/fs-objects", rev = "f6409f2a5378ba1464e69ae216efd4d27d249182", version = "0.0.11" }
+fs-rpc = { git = "https://github.com/FreeSynergy-Net/fs-rpc", rev = "9cbce63c73045a2ea32b88038fd35732c4762624", version = "0.1.4" }
+fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "2bb70d826681403894ec6d65a7fad9d3a3f51ac2", version = "0.2.0" }
+fs-objects = { git = "https://github.com/FreeSynergy-Net/fs-objects", rev = "e38093f1ec61b7c9faaa6f6046f65addb11dcf46", version = "0.0.11" }
 capnp = "0.27"
 capnp-rpc = "0.27"
 tokio = { version = "1", features = ["rt", "net", "sync", "time"] }
-fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", tag = "v0.0.6", version = "0.0.5", optional = true }
+fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", rev = "722d3ce0156711d40cb278f2e835e865d9448290", version = "0.0.7", optional = true }
 uuid = { version = "1", optional = true }
 
 [[test]]
@@ -36,8 +36,8 @@ name = "client"
 required-features = ["client"]
 
 [dev-dependencies]
-fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "e6f69213b68b47e139fc8038c8a095f9ed1fef3c", version = "0.2.0", features = ["fake"] }
-fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", tag = "v0.0.6", version = "0.0.5" }
+fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "2bb70d826681403894ec6d65a7fad9d3a3f51ac2", version = "0.2.0", features = ["fake"] }
+fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", rev = "722d3ce0156711d40cb278f2e835e865d9448290", version = "0.0.7" }
 serde_json = "1"
 tempfile = "3"
 uuid = "1"

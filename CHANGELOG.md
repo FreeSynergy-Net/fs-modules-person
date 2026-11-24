@@ -24,3 +24,4 @@ Version = tag.
 - Review fixes of bundle G: rule gate (`check_rust_rules.py`) green (module docs with `Pattern:`, `client/mod.rs` only declares parts), `service_program` never
   falls back to a bare name, texts about the actor corrected, tests for the `Invalid` answers of the client and P4 with `store owner mismatch`.
 - Pin: fs-rpc rev `d8944ef9` (heartbeat fix: the end of a service no longer hangs when the folder of the socket is gone before it), version 0.1.4 unchanged. One source with fs-modules-planning; no doubled `fs-*` crate in `cargo tree -d`.
+- Re-pin: fs-rpc and fs-trusted-path to rev `0120f9af` (fs-rpc main), version 0.1.4 unchanged; `Cargo.lock` by `cargo update -p fs-rpc -p fs-trusted-path`. One fs-rpc in the graph of fs-starter; no doubled `fs-*` crate in `cargo tree -d`.

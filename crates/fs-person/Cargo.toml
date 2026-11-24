@@ -12,3 +12,17 @@ rust-version.workspace = true
 name = "fs_person"
 
 [dependencies]
+async-trait = "0.1"
+serde_json = "1"
+tokio = { version = "1", features = ["rt"] }
+# One source per library, pinned to the landed main heads (rev AND version, licence gate). fs-types stays on the tag that
+# fs-interfaces and fs-objects use, so there is ONE copy of `PersonRef` (a different rev would be a second crate).
+fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "e6f69213b68b47e139fc8038c8a095f9ed1fef3c", version = "0.2.0" }
+fs-objects = { git = "https://github.com/FreeSynergy-Net/fs-objects", rev = "f6409f2a5378ba1464e69ae216efd4d27d249182", version = "0.0.11" }
+fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", tag = "v0.0.6", version = "0.0.5" }
+
+[dev-dependencies]
+fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "e6f69213b68b47e139fc8038c8a095f9ed1fef3c", version = "0.2.0", features = ["fake"] }
+fs-objects = { git = "https://github.com/FreeSynergy-Net/fs-objects", rev = "f6409f2a5378ba1464e69ae216efd4d27d249182", version = "0.0.11", features = ["testing"] }
+tokio = { version = "1", features = ["full"] }
+tempfile = "3"

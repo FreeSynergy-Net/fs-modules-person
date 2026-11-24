@@ -160,3 +160,18 @@ fn p8_program_that_does_not_serve_is_unreachable() {
     };
     assert!(reason.contains("p.sock"), "{reason}");
 }
+
+/// The program file is never looked for on `PATH` or in the working folder: with nothing installed it is the absolute place next
+/// to the running program (so the start fails visibly), and a relative `running` gives none at all.
+#[test]
+fn program_is_never_a_bare_name() {
+    let dir = tmp();
+    let running = dir.path().join("app");
+    let got = fs_person_service::service_program(&running).unwrap();
+    assert!(got.is_absolute(), "{got:?}");
+    assert_eq!(got, dir.path().join("fs-person-service"));
+    assert_eq!(fs_person_service::service_program(Path::new("app")), None);
+    // What is next to the running program wins.
+    std::fs::write(&got, b"").unwrap();
+    assert_eq!(fs_person_service::service_program(&running).unwrap(), got);
+}

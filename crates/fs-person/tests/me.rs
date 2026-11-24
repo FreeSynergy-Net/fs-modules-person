@@ -2,7 +2,7 @@
 
 use fs_interfaces::owner::{LocalOwner, OwnerProblem, fake::check};
 use fs_objects::{
-    ActivityFilter, By, Error, Outcome, Query, Store, StoredObject, TursoStore, Write,
+    ActivityFilter, By, Error, OpenOptions, Outcome, Query, Store, StoredObject, TursoStore, Write,
 };
 use fs_person::{Anchor, MeRepo, StoreMe, StoreOwner};
 use fs_types::PersonArt;
@@ -76,6 +76,20 @@ async fn p4_the_anchor_owns_itself_and_the_store() {
         assert_eq!(row.owner, Some(a.person_ref()));
         a
     };
+    // The store owner IS the anchor: opened for another person, it refuses; opened for the anchor, it opens.
+    let other = Anchor::new().person_ref();
+    let wrong = TursoStore::open_with(&path, OpenOptions::default().with_owner(other)).await;
+    assert!(
+        matches!(&wrong, Err(Error::Invalid(m)) if m.contains("store owner mismatch")),
+        "{:?}",
+        wrong.err()
+    );
+    TursoStore::open_with(
+        &path,
+        OpenOptions::default().with_owner(anchor.person_ref()),
+    )
+    .await
+    .unwrap();
     let reopened = TursoStore::open(&path).await.unwrap();
     let by = By::new(anchor.urn(), anchor.person_ref());
     let note = fs_objects::Envelope::new("Note", "n");

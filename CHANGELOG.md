@@ -14,10 +14,12 @@ Version = tag.
 - `fs-person-service` (G-3): the service over fs-rpc (binary `fs-person-service [serve]`, socket `default_socket("person")`, data in
   `$XDG_DATA_HOME/freesynergy/modules/person/`, heartbeat, one service per person by the bound socket). FormSource level 1: form
   `me@1.0.0` (one record or none) and command `me.create` (record = `urn:uuid:…`, text `me-created` / `me-exists`, a second call
-  writes nothing). The actor is the connection only: no `--actor`, any argument of `me.create` is refused. `catalog/commands.json`
+  writes nothing). Nobody names the actor: no `--actor`, any argument of `me.create` is refused; the connection only admits the same user, and the log names the anchor as the actor of its birth (the caller is not recorded). `catalog/commands.json`
   and `catalog/forms.json` filled. Seven tests (P2–P5, P9, error cases, catalog), each with a mutant shown red.
 - `fs-person-service` feature `client` (G-4): `PersonServiceOwner: LocalOwner` for other modules. Gets or starts the one service
   (`ensure_single`, `CommandStarter`, program next to the running one or in `/usr/bin`, never on `PATH`), reads the form `me` and gives
   `Ok(PersonRef)` / `NoMe` / `Unreachable { reason }` (`Invalid` for an answer that is no UUIDv7 person). Never creates "me". Runs
   on a thread and runtime of its own (synchronous). Four tests against the real binary: P1 (client, `owner::check` green, two
   questions one id, never creates) and P8 (no program, program that does not serve); three mutants shown red.
+- Review fixes of bundle G: rule gate (`check_rust_rules.py`) green (module docs with `Pattern:`, `client/mod.rs` only declares parts), `service_program` never
+  falls back to a bare name, texts about the actor corrected, tests for the `Invalid` answers of the client and P4 with `store owner mismatch`.

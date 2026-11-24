@@ -2,7 +2,7 @@
 //!
 //! Pattern: Factory – `PersonService` builds, for every connection fs-rpc accepts, a form source over the one repository. The
 //! caller is read by the system (`SO_PEERCRED` on Unix, the token of the pipe client on Windows); a connection whose caller the
-//! system does not tell is dropped by fs-rpc and reported to `refused`. Nothing a client sends says who it is.
+//! system does not tell is dropped by fs-rpc and reported to `refused`. The caller is only admitted, not recorded: nothing a client sends names an actor, and the log has the anchor as the actor of its birth.
 
 use std::rc::Rc;
 use std::sync::Arc;

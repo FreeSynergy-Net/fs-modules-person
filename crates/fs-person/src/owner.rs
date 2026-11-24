@@ -1,4 +1,6 @@
 //! The local owner, read from the store of the module `person`.
+//!
+//! Pattern: Strategy – the variant of `LocalOwner` for the single place (the type has the details and the deviation).
 
 use fs_interfaces::owner::{LocalOwner, OwnerProblem};
 use fs_types::PersonRef;

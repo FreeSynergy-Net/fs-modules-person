@@ -1,4 +1,6 @@
 //! The port of the module: read and create "me".
+//!
+//! Pattern: Repository – the module sees only this port; the store behind it (`StoreMe`) can be exchanged.
 
 use async_trait::async_trait;
 use fs_objects::Result;

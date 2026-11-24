@@ -1,8 +1,8 @@
 //! `FormSource` level 1 of the person module: the form `me` (page) and the command `me.create` (invoke).
 //!
 //! Pattern: Adapter – the port [`MeRepo`] of `fs-person` as records by the field names of `catalog/forms.json`. The wire name of
-//! a command is its capability key of `catalog/commands.json`; `invoke` knows only that one, takes no argument at all (the actor
-//! is the connection, not a value) and says what it did in `text`: `me-created` or `me-exists`. The levels above 1 (compare-and-set,
+//! a command is its capability key of `catalog/commands.json`; `invoke` knows only that one, takes no argument at all (nobody names an actor;
+//! the log names the anchor as the actor of its own birth, the connection only admits the caller) and says what it did in `text`: `me-created` or `me-exists`. The levels above 1 (compare-and-set,
 //! undo, changes, watch) are not spoken: the generated defaults answer them as unimplemented.
 
 use std::rc::Rc;
@@ -76,7 +76,7 @@ fn no_args(args: capnp::struct_list::Reader<'_, value::Owned>) -> Result<(), Fai
             .and_then(|p| p.to_str().ok())
             .unwrap_or("?");
         let why = format!(
-            "unknown argument {path:?}: {COMMAND_CREATE} takes none, the actor is the user of the connection, never a value"
+            "unknown argument {path:?}: {COMMAND_CREATE} takes none, nobody names an actor"
         );
         return Err(problem(BAD_ARGS, "Bad arguments", why, 400));
     }

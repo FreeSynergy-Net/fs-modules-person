@@ -20,7 +20,7 @@ use crate::service::PersonService;
 /// `Control.version` and for the data folder `modules/person`.
 pub const PROGRAM: &str = "person";
 
-const USAGE: &str = "fs-person-service [serve] [--socket PATH] [--data DIR] [--instance DOMAIN]\nDefaults: $XDG_RUNTIME_DIR/freesynergy/person.sock, $XDG_DATA_HOME/freesynergy/modules/person\nServes the form source of the module person (form me, command me.create); the actor is the user of the connection.";
+const USAGE: &str = "fs-person-service [serve] [--socket PATH] [--data DIR] [--instance DOMAIN]\nDefaults: $XDG_RUNTIME_DIR/freesynergy/person.sock, $XDG_DATA_HOME/freesynergy/modules/person\nServes the form source of the module person (form me, command me.create); nobody names an actor, the connection (same user) only decides who may call.";
 
 /// There is no `--actor`: the words that name one are refused with the reason (fs-rpc would take it; this module does not).
 ///
@@ -32,7 +32,7 @@ pub fn reject_actor<'a>(args: impl IntoIterator<Item = &'a OsStr>) -> Result<(),
         a == "--actor" || a.starts_with("--actor=")
     });
     if named {
-        return Err("there is no --actor: the actor is the user of the connection, never a word of the command line".into());
+        return Err("there is no --actor: nobody names an actor, neither on the command line nor in a message".into());
     }
     Ok(())
 }

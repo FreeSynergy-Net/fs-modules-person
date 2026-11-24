@@ -11,10 +11,14 @@
 // The generated `Server` trait is async for every method, also those that never wait.
 #![allow(clippy::unused_async_trait_impl)]
 
+#[cfg(feature = "client")]
+mod client;
 mod serve;
 mod service;
 mod source;
 
+#[cfg(feature = "client")]
+pub use client::PersonServiceOwner;
 pub use serve::{PROGRAM, reject_actor, serve_command, serve_with};
 pub use service::PersonService;
 pub use source::{COMMAND_CREATE, FORM_ME, LEVEL, PROVIDER};

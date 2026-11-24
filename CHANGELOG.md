@@ -16,3 +16,8 @@ Version = tag.
   `me@1.0.0` (one record or none) and command `me.create` (record = `urn:uuid:…`, text `me-created` / `me-exists`, a second call
   writes nothing). The actor is the connection only: no `--actor`, any argument of `me.create` is refused. `catalog/commands.json`
   and `catalog/forms.json` filled. Seven tests (P2–P5, P9, error cases, catalog), each with a mutant shown red.
+- `fs-person-service` feature `client` (G-4): `PersonServiceOwner: LocalOwner` for other modules. Gets or starts the one service
+  (`ensure_single`, `CommandStarter`, program next to the running one or in `/usr/bin`, never on `PATH`), reads the form `me` and gives
+  `Ok(PersonRef)` / `NoMe` / `Unreachable { reason }` (`Invalid` for an answer that is no UUIDv7 person). Never creates "me". Runs
+  on a thread and runtime of its own (synchronous). Four tests against the real binary: P1 (client, `owner::check` green, two
+  questions one id, never creates) and P8 (no program, program that does not serve); three mutants shown red.

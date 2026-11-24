@@ -3,5 +3,11 @@
   "version": "0.0.1",
   "contract": "person",
   "scope": "own-contract",
-  "commands": []
+  "commands": [
+    {
+      "capability": "me.create", "call": "FormSource.invoke", "access": "write",
+      "params": [],
+      "help": { "topic": "person-me-create", "text": { "en": "Create the one person of this installation (the anchor). If it exists, the same person is answered and nothing is written. The actor is the user of the connection; there is no argument.", "de": "Legt die eine Person dieser Installation an (den Anker). Gibt es sie schon, kommt dieselbe Person zurueck und nichts wird geschrieben. Der Akteur ist der Benutzer der Verbindung; es gibt kein Argument." } }
+    }
+  ]
 }

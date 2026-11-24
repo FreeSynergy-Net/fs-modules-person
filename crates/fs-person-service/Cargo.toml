@@ -11,4 +11,23 @@ rust-version.workspace = true
 [lib]
 name = "fs_person_service"
 
+[[bin]]
+name = "fs-person-service"
+path = "src/main.rs"
+
 [dependencies]
+fs-person = { path = "../fs-person" }
+# One source per library, the same as fs-person and the planning module (rev AND version, licence gate).
+fs-rpc = { git = "https://github.com/FreeSynergy-Net/fs-rpc", rev = "11cdf71482cfcd8de14038c4e7fc796f2611e02c", version = "0.1.4" }
+fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "e6f69213b68b47e139fc8038c8a095f9ed1fef3c", version = "0.2.0" }
+fs-objects = { git = "https://github.com/FreeSynergy-Net/fs-objects", rev = "f6409f2a5378ba1464e69ae216efd4d27d249182", version = "0.0.11" }
+capnp = "0.27"
+capnp-rpc = "0.27"
+tokio = { version = "1", features = ["rt", "net", "sync", "time"] }
+
+[dev-dependencies]
+fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", tag = "v0.0.6", version = "0.0.5" }
+serde_json = "1"
+tempfile = "3"
+uuid = "1"
+tokio = { version = "1", features = ["rt", "net", "sync", "time", "macros"] }

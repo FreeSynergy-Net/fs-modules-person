@@ -1,4 +1,20 @@
-//! `fs-person-service`: the person module as a service (one process per person). Empty skeleton; no code yet.
+//! `fs-person-service`: the person module as a service (one process per person) over fs-rpc. It serves the form source (level 1)
+//! of the module `person`: the command `me.create` and the form `me` (the one person of this installation, or nothing yet).
 //!
-//! Pattern: Adapter – the service turns the calls of the form source (fs-rpc) into calls of the port of
-//! `fs-person`; the transport is the adapter, the module does not know it.
+//! The actor of a request is the user of the connection (fs-rpc reads it from the system), never a word of a message or of the
+//! command line: there is no `--actor` and no `actor` argument. The data lives in `$XDG_DATA_HOME/freesynergy/modules/person/`.
+//!
+//! Pattern: Facade – this file only declares modules and re-exports.
+
+#![deny(missing_docs)]
+#![warn(clippy::pedantic)]
+// The generated `Server` trait is async for every method, also those that never wait.
+#![allow(clippy::unused_async_trait_impl)]
+
+mod serve;
+mod service;
+mod source;
+
+pub use serve::{PROGRAM, reject_actor, serve_command, serve_with};
+pub use service::PersonService;
+pub use source::{COMMAND_CREATE, FORM_ME, LEVEL, PROVIDER};

@@ -4,6 +4,8 @@ Version = tag.
 
 ## Unreleased
 
+- Pin: fs-rpc rev `0f639470` (was `9aff426a`); fs-interfaces rev `ad56e2f4` (was `a395979b`), the one fs-rpc uses, so there is one `fs-interfaces` in `cargo tree -d`. Written with the help of Claude (Anthropic).
+- Auf Deutsch: Pin: fs-rpc rev `0f639470` (war `9aff426a`); fs-interfaces rev `ad56e2f4` (war `a395979b`), derselbe wie in fs-rpc, damit nur ein `fs-interfaces` in `cargo tree -d` steht. Geschrieben mit Hilfe von Claude (Anthropic).
 - Pin: fs-rpc rev `9aff426a` (was `1de6cf2a`); fs-interfaces rev `a395979b` (was `e8699fb4`), the one fs-rpc uses, so there is one `fs-interfaces` in `cargo tree -d`. Written with the help of Claude (Anthropic).
 - Auf Deutsch: Pin: fs-rpc rev `9aff426a` (war `1de6cf2a`); fs-interfaces rev `a395979b` (war `e8699fb4`), derselbe wie in fs-rpc, damit nur ein `fs-interfaces` in `cargo tree -d` steht. Geschrieben mit Hilfe von Claude (Anthropic).
 - Pin: fs-rpc rev `1de6cf2a` (was `9585ed18`); fs-interfaces rev `e8699fb4` (was `83b96e30`), the one fs-rpc uses, so there is one `fs-interfaces` in `cargo tree -d`. Written with the help of Claude (Anthropic).

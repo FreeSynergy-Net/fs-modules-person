@@ -4,6 +4,8 @@ Version = tag.
 
 ## Unreleased
 
+- Pin: fs-rpc rev `aa59c6bd` (was `459c1e8d`; SettingsCore change in fs-settings-rpc). Written with the help of Claude (Anthropic).
+- Auf Deutsch: Pin: fs-rpc rev `aa59c6bd` (war `459c1e8d`; Änderung an SettingsCore in fs-settings-rpc). Geschrieben mit Hilfe von Claude (Anthropic).
 - Pin follow-up: fs-rpc rev `459c1e8d` (branch `unreviewed/pin-rpc-ifc-76df5407`, same tree as fs-rpc main after landing; was `8cb7f9a5`) and fs-interfaces rev `76df5407` (was `4f6c3281`; single-record@1.2.0, appended only), the one fs-rpc uses. `cargo tree -d` shows no fs-* duplicate. Only pins, no code. Written with the help of Claude (Anthropic).
 - Auf Deutsch: Pin-Folge: fs-rpc rev `459c1e8d` (Zweig `unreviewed/pin-rpc-ifc-76df5407`, nach der Landung derselbe Stand wie fs-rpc main; war `8cb7f9a5`) und fs-interfaces rev `76df5407` (war `4f6c3281`; single-record@1.2.0, nur angehängt), der von fs-rpc genutzte. `cargo tree -d` zeigt kein fs-* doppelt. Nur Pins, kein Code. Geschrieben mit Hilfe von Claude (Anthropic).
 - Pin: fs-rpc rev `8cb7f9a5` (main; was `b279f428`; new there: `SettingsCore` + `SettingsRules` in `fs-settings-rpc`, nothing this module uses). fs-interfaces stays at `4f6c3281` (the one fs-rpc uses); `cargo tree -d` shows no fs-* duplicate. Only the pin, no code. Written with the help of Claude (Anthropic).

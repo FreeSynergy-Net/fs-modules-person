@@ -4,6 +4,8 @@ Version = tag.
 
 ## Unreleased
 
+- Pin wave 3: fs-rpc rev `cde5b025` (branch `unreviewed/pin-wave3-fs-rpc`; was `aa59c6bd`; only pins there) and fs-interfaces rev `71809eaa` (was `76df5407`). `cargo tree -d` shows no fs-* duplicate, no `[patch]`. No Rust change. Written with the help of Claude (Anthropic).
+- Auf Deutsch: Pin-Welle 3: fs-rpc rev `cde5b025` (Zweig `unreviewed/pin-wave3-fs-rpc`; war `aa59c6bd`; dort nur Pins) und fs-interfaces rev `71809eaa` (war `76df5407`). `cargo tree -d` zeigt kein fs-* doppelt, kein `[patch]`. Keine Rust-Änderung. Geschrieben mit Hilfe von Claude (Anthropic).
 - Pin: fs-rpc rev `aa59c6bd` (was `459c1e8d`; SettingsCore change in fs-settings-rpc). Written with the help of Claude (Anthropic).
 - Auf Deutsch: Pin: fs-rpc rev `aa59c6bd` (war `459c1e8d`; Änderung an SettingsCore in fs-settings-rpc). Geschrieben mit Hilfe von Claude (Anthropic).
 - Pin follow-up: fs-rpc rev `459c1e8d` (branch `unreviewed/pin-rpc-ifc-76df5407`, same tree as fs-rpc main after landing; was `8cb7f9a5`) and fs-interfaces rev `76df5407` (was `4f6c3281`; single-record@1.2.0, appended only), the one fs-rpc uses. `cargo tree -d` shows no fs-* duplicate. Only pins, no code. Written with the help of Claude (Anthropic).

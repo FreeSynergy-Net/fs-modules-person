@@ -578,7 +578,7 @@ checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
 [[package]]
 name = "fs-interfaces"
 version = "0.3.0"
-source = "git+https://github.com/FreeSynergy-Net/fs-interfaces?rev=b3afc86d37c071a6d334710b9818241f56859554#b3afc86d37c071a6d334710b9818241f56859554"
+source = "git+https://github.com/FreeSynergy-Net/fs-interfaces?rev=4fcd013e60f8859ad70b203f2838d4b23912c1f4#4fcd013e60f8859ad70b203f2838d4b23912c1f4"
 dependencies = [
  "capnp",
  "fs-types",
@@ -638,7 +638,7 @@ dependencies = [
 [[package]]
 name = "fs-rpc"
 version = "0.1.4"
-source = "git+https://github.com/FreeSynergy-Net/fs-rpc?rev=07bf09464220e6042d4c36fc731d2ea1fab0b6af#07bf09464220e6042d4c36fc731d2ea1fab0b6af"
+source = "git+https://github.com/FreeSynergy-Net/fs-rpc?rev=a773ceadb747ef6a0766b32983453e2b9855a8fd#a773ceadb747ef6a0766b32983453e2b9855a8fd"
 dependencies = [
  "capnp",
  "capnp-rpc",
@@ -658,7 +658,7 @@ dependencies = [
 [[package]]
 name = "fs-trusted-path"
 version = "0.1.4"
-source = "git+https://github.com/FreeSynergy-Net/fs-rpc?rev=07bf09464220e6042d4c36fc731d2ea1fab0b6af#07bf09464220e6042d4c36fc731d2ea1fab0b6af"
+source = "git+https://github.com/FreeSynergy-Net/fs-rpc?rev=a773ceadb747ef6a0766b32983453e2b9855a8fd#a773ceadb747ef6a0766b32983453e2b9855a8fd"
 dependencies = [
  "windows-sys 0.61.2",
 ]

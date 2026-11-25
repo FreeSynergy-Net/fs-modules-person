@@ -4,6 +4,9 @@ Version = tag.
 
 ## Unreleased
 
+- Pin: fs-rpc rev `07bf0946` (branch `unreviewed/stufe4-connect`, not on main yet; was `e3871c3b`); fs-interfaces rev `b3afc86d` (was `6b02b138`), the one fs-rpc uses, so planning (Stufe 4 B3) has one `fs-interfaces` and one `fs-rpc`. Only the pin, no code. Re-pin to the fs-rpc main rev after it lands. Written with the help of Claude (Anthropic).
+- Auf Deutsch: Pin: fs-rpc rev `07bf0946` (Zweig `unreviewed/stufe4-connect`, noch nicht auf main; war `e3871c3b`); fs-interfaces rev `b3afc86d` (war `6b02b138`), derselbe wie in fs-rpc, damit planning (Stufe 4 B3) nur ein `fs-interfaces` und ein `fs-rpc` hat. Nur der Pin, kein Code. Nach der Landung von fs-rpc auf die main-rev umpinnen. Geschrieben mit Hilfe von Claude (Anthropic).
+
 - Pin: fs-rpc rev `e3871c3b` (was `0f639470`); fs-interfaces rev `6b02b138` (was `ad56e2f4`, version 0.3.0), the one fs-rpc uses, so there is one `fs-interfaces` in `cargo tree -d`. Written with the help of Claude (Anthropic).
 - Auf Deutsch: Pin: fs-rpc rev `e3871c3b` (war `0f639470`); fs-interfaces rev `6b02b138` (war `ad56e2f4`, Version 0.3.0), derselbe wie in fs-rpc, damit nur ein `fs-interfaces` in `cargo tree -d` steht. Geschrieben mit Hilfe von Claude (Anthropic).
 - Pin: fs-rpc rev `0f639470` (was `9aff426a`); fs-interfaces rev `ad56e2f4` (was `a395979b`), the one fs-rpc uses, so there is one `fs-interfaces` in `cargo tree -d`. Written with the help of Claude (Anthropic).

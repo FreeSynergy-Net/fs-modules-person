@@ -638,7 +638,7 @@ dependencies = [
 [[package]]
 name = "fs-rpc"
 version = "0.1.4"
-source = "git+https://github.com/FreeSynergy-Net/fs-rpc?rev=82d2ba1939c5df38d61bbae4eecd5a6fde018c2b#82d2ba1939c5df38d61bbae4eecd5a6fde018c2b"
+source = "git+https://github.com/FreeSynergy-Net/fs-rpc?rev=9585ed181fc98db7e504272f451a10245dca7f1a#9585ed181fc98db7e504272f451a10245dca7f1a"
 dependencies = [
  "capnp",
  "capnp-rpc",
@@ -658,7 +658,7 @@ dependencies = [
 [[package]]
 name = "fs-trusted-path"
 version = "0.1.4"
-source = "git+https://github.com/FreeSynergy-Net/fs-rpc?rev=82d2ba1939c5df38d61bbae4eecd5a6fde018c2b#82d2ba1939c5df38d61bbae4eecd5a6fde018c2b"
+source = "git+https://github.com/FreeSynergy-Net/fs-rpc?rev=9585ed181fc98db7e504272f451a10245dca7f1a#9585ed181fc98db7e504272f451a10245dca7f1a"
 dependencies = [
  "windows-sys 0.61.2",
 ]

@@ -4,8 +4,10 @@ Version = tag.
 
 ## Unreleased
 
-- Pin: fs-rpc rev `82d2ba19` (was `56f5cc39`; one fs-components stand `4c515bf7` in the graph). Written with the help of Claude (Anthropic).
-- Auf Deutsch: Pin: fs-rpc rev `82d2ba19` (war `56f5cc39`; ein fs-components-Stand `4c515bf7` im Graph). Geschrieben mit Hilfe von Claude (Anthropic).
+- Pin: fs-rpc rev `9585ed18` (was `82d2ba19`). Written with the help of Claude (Anthropic).
+- Auf Deutsch: Pin: fs-rpc rev `9585ed18` (war `82d2ba19`). Geschrieben mit Hilfe von Claude (Anthropic).
+- Pin: fs-rpc rev `82d2ba19` (was `56f5cc39`). Written with the help of Claude (Anthropic).
+- Auf Deutsch: Pin: fs-rpc rev `82d2ba19` (war `56f5cc39`). Geschrieben mit Hilfe von Claude (Anthropic).
 - Birth: local repository with an empty workspace (`fs-person`, `fs-person-service`), empty `catalog/`
   (`commands.json`, `forms.json`), CI copied from `fs-modules-planning` (`check.yml`, `windows.yml`), licences MIT OR Apache-2.0.
   No domain code yet.

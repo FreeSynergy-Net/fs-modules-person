@@ -4,6 +4,8 @@ Version = tag.
 
 ## Unreleased
 
+- Pin: fs-rpc rev `63e3a486` (was `a773cead`; its only change is `fs-settings` from fs-components `be580b10`); `cargo tree -d` shows no fs-* duplicate, one fs-rpc. No Rust change. Written with the help of Claude (Anthropic).
+- Auf Deutsch: Pin: fs-rpc rev `63e3a486` (war `a773cead`; seine einzige Änderung ist `fs-settings` aus fs-components `be580b10`); `cargo tree -d` zeigt kein fs-* Doppeltes, ein fs-rpc (fs-components liegt nicht in diesem Graph). Keine Rust-Änderung. Geschrieben mit Hilfe von Claude (Anthropic).
 - Pin: fs-rpc rev `a773cead` (main, Stufe 4 V2; was `07bf0946`); fs-interfaces rev `4fcd013e` (was `b3afc86d`), the one fs-rpc uses, so there is one `fs-interfaces` and one `fs-rpc` in the graph. Only the pin, no code. Written with the help of Claude (Anthropic).
 - Auf Deutsch: Pin: fs-rpc rev `a773cead` (main, Stufe 4 V2; war `07bf0946`); fs-interfaces rev `4fcd013e` (war `b3afc86d`), derselbe wie in fs-rpc, damit nur ein `fs-interfaces` und ein `fs-rpc` im Graph stehen. Nur der Pin, kein Code. Geschrieben mit Hilfe von Claude (Anthropic).
 - Pin: fs-rpc rev `07bf0946` (branch `unreviewed/stufe4-connect`, not on main yet; was `e3871c3b`); fs-interfaces rev `b3afc86d` (was `6b02b138`), the one fs-rpc uses, so planning (Stufe 4 B3) has one `fs-interfaces` and one `fs-rpc`. Only the pin, no code. Re-pin to the fs-rpc main rev after it lands. Written with the help of Claude (Anthropic).

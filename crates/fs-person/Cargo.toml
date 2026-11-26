@@ -15,6 +15,7 @@ name = "fs_person"
 async-trait = "0.1"
 serde_json = "1"
 tokio = { version = "1", features = ["rt"] }
+capnp = "0.27"
 # One source per library, pinned to the landed main heads (rev AND version, licence gate). fs-types is the rev that
 # fs-interfaces and fs-objects use (722d3ce0), so there is ONE copy of `PersonRef` (a different rev would be a second crate).
 fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "92dbb53e9c9ea2c48e85a27712f0456f2a7b8161", version = "0.3.0" }
@@ -29,3 +30,5 @@ fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev 
 fs-objects = { git = "https://github.com/FreeSynergy-Net/fs-objects", rev = "e38093f1ec61b7c9faaa6f6046f65addb11dcf46", version = "0.0.11", features = ["testing"] }
 tokio = { version = "1", features = ["full"] }
 tempfile = "3"
+# The pairing check of the texts (en/de, same variables); the same rev as every other crate of the graph.
+fs-components-mf2 = { git = "https://github.com/FreeSynergy-Net/fs-components", rev = "f2e90244ff830197e56c127aa5da53ac591a66ea", version = "0.1.0", features = ["compile"] }

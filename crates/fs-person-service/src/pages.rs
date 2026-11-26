@@ -28,7 +28,7 @@ pub(crate) async fn page_of<R: PersonRepo + ?Sized>(
 ) -> Result<Page, Refusal> {
     match form {
         Served::Me => me_page(repo).await,
-        Served::Rows => rows_page(repo, q).await,
+        Served::Rows | Served::Tiles => rows_page(repo, q).await,
         Served::Record => record_page(repo, &q.scope).await,
     }
 }

@@ -8,7 +8,7 @@ use std::collections::BTreeSet;
 
 use fs_interfaces::forms::{Art, Channel, find_key};
 use fs_person::{DESCRIBES, ProfileType};
-use fs_person_service::{FORM_RECORD, FORM_ROWS, record_fields};
+use fs_person_service::{FORM_RECORD, FORM_ROWS, FORM_TILES, record_fields};
 use fs_types::{BasicType, DescribesType as _};
 use serde_json::Value;
 
@@ -121,7 +121,7 @@ fn check_entry(f: &Value) {
 #[test]
 fn the_catalog_agrees_with_forms_txt() {
     let forms = catalog();
-    assert_eq!(forms.len(), 3, "me, rows, single-record");
+    assert_eq!(forms.len(), 4, "me, rows, tiles, single-record");
     // `me` is the form of this module's own contract (scope own-contract): forms.txt does not know it, so nothing is compared
     assert!(find_key("me@1.0.0").is_none());
     for f in forms.iter().filter(|f| f["name"] != "me") {
@@ -132,9 +132,10 @@ fn the_catalog_agrees_with_forms_txt() {
 #[test]
 fn the_service_names_the_versions_the_catalog_declares() {
     assert_eq!(key_of(&entry("rows")), FORM_ROWS);
+    assert_eq!(key_of(&entry("tiles")), FORM_TILES);
     assert_eq!(key_of(&entry("single-record")), FORM_RECORD);
     // nothing writes a profile: no command channel of the two list forms is mapped, `open` and `actions` neither
-    for name in ["rows", "single-record"] {
+    for name in ["rows", "tiles", "single-record"] {
         let f = entry(name);
         for channel in ["open", "actions", "edit", "create", "remove"] {
             assert!(
@@ -142,6 +143,29 @@ fn the_service_names_the_versions_the_catalog_declares() {
                 "{name}: `{channel}` writes"
             );
         }
+    }
+}
+
+#[test]
+fn the_tiles_show_the_four_facts_of_the_decision_and_nothing_writes() {
+    let tiles = entry("tiles");
+    assert_eq!(
+        mapped(&tiles, "facts"),
+        ["organizations", "titles", "emails", "phones"]
+    );
+    assert_eq!(mapped(&tiles, "items"), ["Profile"]);
+    assert_eq!(mapped(&tiles, "label"), ["label"]);
+    assert_eq!(mapped(&tiles, "state"), ["state"]);
+    assert_eq!(mapped(&tiles, "preview"), ["media"]);
+    // no command channel: `open` and `actions` are not mapped (checked in `check_entry` too: no channel accepts a command)
+    assert!(tiles["map"].get("open").is_none() && tiles["map"].get("actions").is_none());
+    // the facts are the columns of the list that the form can carry (`nicknames` is a column, not a fact)
+    let rows = entry("rows");
+    for fact in mapped(&tiles, "facts") {
+        assert!(
+            mapped(&rows, "columns").contains(&fact),
+            "{fact} is no column of rows"
+        );
     }
 }
 

@@ -9,6 +9,7 @@
 //! Profiles are read only here (names, addresses, links to accounts). There is never a second person next to the anchor.
 
 mod anchor;
+mod catalog_file;
 mod describe;
 mod fields;
 mod list;
@@ -27,6 +28,7 @@ mod store;
 mod values;
 
 pub use anchor::Anchor;
+pub use catalog_file::{read_type_catalog, type_catalog_bytes, type_registry};
 pub use describe::{DESCRIBES, PROFILE, PROGRAM, ProfileType};
 pub use list::{Listing, list_page, list_total};
 pub use owner::StoreOwner;

@@ -37,6 +37,27 @@
     }
   },
   {
+    "name": "tiles",
+    "version": "1.1.0",
+    "type": "Profile",
+    "map": {
+      "items": "Profile",
+      "label": "label",
+      "preview": "media",
+      "state": "state",
+      "facts": ["organizations", "titles", "emails", "phones"]
+    },
+    "fields": {
+      "label": "text",
+      "media": "image",
+      "state": "text",
+      "organizations": "text",
+      "titles": "text",
+      "emails": "email",
+      "phones": "text"
+    }
+  },
+  {
     "name": "single-record",
     "version": "1.2.0",
     "type": "Profile",

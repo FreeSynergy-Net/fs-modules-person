@@ -20,6 +20,9 @@ pub const FORM_ME: &str = "me@1.0.0";
 pub const FORM_ROWS: &str = "rows@1.0.0";
 /// One profile as a whole (scope = the id of the profile; the fields repeat per item); `catalog/forms.json` declares it as `1.2.0`.
 pub const FORM_RECORD: &str = "single-record@1.2.0";
+/// The same profiles as tiles (type `Profile`, scope `all`); `catalog/forms.json` declares it as `1.1.0`. The records are those of `rows`; the
+/// catalog maps the preferred value of four columns as facts (`nicknames` is not mapped, so the host never sees it here).
+pub const FORM_TILES: &str = "tiles@1.1.0";
 /// The scope of the list: every profile that is a person.
 pub const SCOPE_ALL: &str = "all";
 /// The one command, the capability key of `catalog/commands.json`.
@@ -36,6 +39,8 @@ pub(crate) enum Served {
     Rows,
     /// `single-record@1.2`.
     Record,
+    /// `tiles@1.1`: the records of `Rows`, drawn as tiles.
+    Tiles,
 }
 
 /// The form a key `name@x.y` or `name@x.y.z` names (the patch does not count), if this module draws it.
@@ -44,6 +49,7 @@ pub(crate) fn served(form: &str) -> Option<Served> {
     match (name, v.major, v.minor) {
         ("me", 1, 0) => Some(Served::Me),
         ("rows", 1, 0) => Some(Served::Rows),
+        ("tiles", 1, 1) => Some(Served::Tiles),
         ("single-record", 1, 2) => Some(Served::Record),
         _ => None,
     }

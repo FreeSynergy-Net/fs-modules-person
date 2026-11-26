@@ -29,7 +29,8 @@ mod service;
 pub use client::{PersonServiceOwner, me_ids, service_program};
 pub use core::PersonCore;
 pub use forms::{
-    COMMAND_CREATE, FORM_ME, FORM_RECORD, FORM_ROWS, LEVEL, PAGE_MAX, PROVIDER, SCOPE_ALL,
+    COMMAND_CREATE, FORM_ME, FORM_RECORD, FORM_ROWS, FORM_TILES, LEVEL, PAGE_MAX, PROVIDER,
+    SCOPE_ALL,
 };
 pub use owner::Owner;
 pub use rows::{MEDIA, me_record, profile_record, profile_records, record_fields, state_word};

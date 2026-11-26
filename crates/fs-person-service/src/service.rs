@@ -9,7 +9,7 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use fs_person::MeRepo;
+use fs_person::PersonRepo;
 use fs_rpc::{
     ActorOfConnection, Caller, CallerError, Guarded, OsUserIsPerson, PerConnection, Ports,
 };
@@ -18,14 +18,14 @@ use crate::core::PersonCore;
 use crate::owner::Owner;
 
 /// The service: one repository behind one guarded core, one `FormSource` per connection.
-pub struct PersonService<R: MeRepo + 'static> {
+pub struct PersonService<R: PersonRepo + 'static> {
     guarded: Guarded<PersonCore<R>>,
     refused: Rc<dyn Fn(&CallerError)>,
     /// What lives as long as the service (the heartbeat); dropped with it.
     keep: Vec<Box<dyn std::any::Any>>,
 }
 
-impl<R: MeRepo + 'static> PersonService<R> {
+impl<R: PersonRepo + 'static> PersonService<R> {
     /// Serve `repo`: "me" is read ONCE here (before the loop serves, never in it), and every admitted connection is a person (the
     /// OS user of the service, `OsUserIsPerson`). `refused` is told when the system did not say who is on a connection.
     ///
@@ -73,7 +73,7 @@ impl<R: MeRepo + 'static> PersonService<R> {
     }
 }
 
-impl<R: MeRepo + 'static> PerConnection for PersonService<R> {
+impl<R: PersonRepo + 'static> PerConnection for PersonService<R> {
     fn bootstrap(&mut self, caller: &Caller) -> capnp::capability::Client {
         self.guarded.connect(caller).client
     }

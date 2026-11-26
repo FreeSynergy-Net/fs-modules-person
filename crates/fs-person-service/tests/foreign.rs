@@ -15,7 +15,7 @@ use common::{Repo, invoke, page, serve_service};
 use fs_interfaces::formsource_capnp::form_source;
 use fs_interfaces::module::{Ask, Context, HiddenReason, RightsRules, Verdict};
 use fs_objects::TursoStore;
-use fs_person::{Anchor, MeRepo, StoreMe};
+use fs_person::{Anchor, MeRepo, PersonStore};
 use fs_person_service::{COMMAND_CREATE, FORM_ME, Owner, PersonCore, PersonRules, PersonService};
 use fs_rpc::{AllBots, FixedPerson, OsUserIsPerson, Ports};
 use tokio::task::LocalSet;
@@ -47,7 +47,7 @@ struct Outcome {
 /// One service for `stranger` (with the rules of the module, or with `AllowAll`): can it create "me", and does it see "me"?
 async fn run(stranger: Stranger, lax: bool) -> Outcome {
     let dir = tempfile::Builder::new().prefix("fs").tempdir().unwrap();
-    let repo: Repo = Arc::new(StoreMe(TursoStore::open_in_memory().await.unwrap()));
+    let repo: Repo = Arc::new(PersonStore(TursoStore::open_in_memory().await.unwrap()));
     // an owner exists: reading is the question; creating is a second probe on a fresh store below
     let owner = Owner::read(&*repo).await.unwrap();
     let ports = match stranger {
@@ -121,7 +121,7 @@ async fn a_refused_create_writes_nothing() {
     LocalSet::new()
         .run_until(async {
             let dir = tempfile::Builder::new().prefix("fs").tempdir().unwrap();
-            let repo: Repo = Arc::new(StoreMe(TursoStore::open_in_memory().await.unwrap()));
+            let repo: Repo = Arc::new(PersonStore(TursoStore::open_in_memory().await.unwrap()));
             let owner = Owner::read(&*repo).await.unwrap();
             let core = PersonCore::new(repo.clone(), owner.clone());
             let service = PersonService::guarding(core, Ports::new(AllBots, owner), |_| {});
@@ -148,7 +148,7 @@ async fn the_reserved_anchor_is_the_one_that_is_born() {
     LocalSet::new()
         .run_until(async {
             let dir = tempfile::Builder::new().prefix("fs").tempdir().unwrap();
-            let repo: Repo = Arc::new(StoreMe(TursoStore::open_in_memory().await.unwrap()));
+            let repo: Repo = Arc::new(PersonStore(TursoStore::open_in_memory().await.unwrap()));
             let owner = Owner::read(&*repo).await.unwrap();
             let reserved = owner.person();
             let core = PersonCore::new(repo.clone(), owner.clone());
@@ -181,7 +181,7 @@ fn the_rules_know_the_owner_and_nobody_else() {
     let rt = tokio::runtime::Builder::new_current_thread()
         .build()
         .unwrap();
-    let repo = StoreMe(rt.block_on(TursoStore::open_in_memory()).unwrap());
+    let repo = PersonStore(rt.block_on(TursoStore::open_in_memory()).unwrap());
     let owner = rt.block_on(Owner::read(&repo)).unwrap();
     let rules = PersonRules::new(owner.clone());
     let conn = || Caller::Connection {

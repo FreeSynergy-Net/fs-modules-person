@@ -16,6 +16,9 @@ pub const TYPE: &str = "Profile";
 /// The media type of its content: the JSContact card as JSON.
 pub const CONTENT_TYPE: &str = "application/jscontact+json";
 
+/// The kinds of card (RFC 9553 section 2.1.4) that are no person and so are not in the list of people.
+pub const UNLISTED_KINDS: [&str; 4] = ["group", "org", "location", "device"];
+
 /// One stored profile.
 #[derive(Clone, Debug, PartialEq)]
 #[non_exhaustive]
@@ -50,6 +53,18 @@ impl Profile {
             describes: o.envelope.describes.clone(),
             sensitive: !o.envelope.sensitive.is_empty(),
         })
+    }
+
+    /// Whether the list of PEOPLE shows this profile (ENTSCHEID person-frontend section 2): a card of the kind `group`, `org`,
+    /// `location` or `device` is not a person (groups have one source, `fs-groups`); `application` (an AI, ADR 0091) and every
+    /// other kind, or no kind, is listed. The profile stays readable by its id.
+    #[must_use]
+    pub fn listed(&self) -> bool {
+        !self
+            .card
+            .kind
+            .as_deref()
+            .is_some_and(|k| UNLISTED_KINDS.contains(&k))
     }
 
     /// The values of a field as a form shows them: the table of the type (`describes` is the one field that is not on the

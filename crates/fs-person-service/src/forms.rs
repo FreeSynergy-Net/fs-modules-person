@@ -14,10 +14,40 @@ pub const PROVIDER: &str = "person";
 /// The level of `FormSource` this module says: 1 = page and invoke (the wrapper answers the levels above; nothing here is logged
 /// for taking back, so `revert` is `not-revertible` and `changes` is empty).
 pub const LEVEL: u32 = 1;
-/// The form this module draws, as `name@x.y.z`; `catalog/forms.json` declares it as `1.0`.
+/// The form of the one person, as `name@x.y.z`; `catalog/forms.json` declares it as `1.0`.
 pub const FORM_ME: &str = "me@1.0.0";
+/// The list of the profiles (type `Profile`, scope `all`); `catalog/forms.json` declares it as `1.0.0`.
+pub const FORM_ROWS: &str = "rows@1.0.0";
+/// One profile as a whole (scope = the id of the profile; the fields repeat per item); `catalog/forms.json` declares it as `1.2.0`.
+pub const FORM_RECORD: &str = "single-record@1.2.0";
+/// The scope of the list: every profile that is a person.
+pub const SCOPE_ALL: &str = "all";
 /// The one command, the capability key of `catalog/commands.json`.
 pub const COMMAND_CREATE: &str = "me.create";
+/// The most profiles of one page (and the page when the caller names no limit).
+pub const PAGE_MAX: u32 = 500;
+
+/// Which of its forms a key names.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Served {
+    /// `me@1.0`.
+    Me,
+    /// `rows@1.0`.
+    Rows,
+    /// `single-record@1.2`.
+    Record,
+}
+
+/// The form a key `name@x.y` or `name@x.y.z` names (the patch does not count), if this module draws it.
+pub(crate) fn served(form: &str) -> Option<Served> {
+    let (name, v) = parse_key(form)?;
+    match (name, v.major, v.minor) {
+        ("me", 1, 0) => Some(Served::Me),
+        ("rows", 1, 0) => Some(Served::Rows),
+        ("single-record", 1, 2) => Some(Served::Record),
+        _ => None,
+    }
+}
 
 /// A refusal of `kind` (without the prefix of the wire), with its status and a reason for people.
 pub(crate) fn refuse(kind: &str, status: u16, detail: impl Into<String>) -> Refusal {
@@ -35,11 +65,6 @@ pub(crate) fn broken(e: &impl std::fmt::Display) -> Refusal {
         500,
         format!("the store of the module failed: {e}"),
     )
-}
-
-/// Whether `form` is the key of the form this module draws: the name `me`, major 1, minor 0 (`x.y` and `x.y.z`).
-pub(crate) fn serves(form: &str) -> bool {
-    parse_key(form).is_some_and(|(name, v)| name == "me" && (v.major, v.minor) == (1, 0))
 }
 
 /// `me.create` takes nothing: any value (an `actor`, an `owner`, whatever) is refused with its reason, before anything is written.

@@ -9,7 +9,7 @@ use std::io::{self, Write};
 use std::sync::Arc;
 
 use fs_objects::TursoStore;
-use fs_person::StoreMe;
+use fs_person::{PersonRepo, PersonStore, SampleRepo};
 use fs_rpc::{
     ServerIdentity, ServerOptions, default_data_dir, prepare_data_dir, run_until_signal_callers,
 };
@@ -20,7 +20,7 @@ use crate::service::PersonService;
 /// `Control.version` and for the data folder `modules/person`.
 pub const PROGRAM: &str = "person";
 
-const USAGE: &str = "fs-person-service [serve] [--socket PATH] [--data DIR] [--instance DOMAIN]\nDefaults: $XDG_RUNTIME_DIR/freesynergy/person.sock, $XDG_DATA_HOME/freesynergy/modules/person\nServes the form source of the module person (form me, command me.create); nobody names an actor, the connection (same user) only decides who may call.";
+const USAGE: &str = "fs-person-service [serve] [--socket PATH] [--data DIR] [--instance DOMAIN] [--sample]\nDefaults: $XDG_RUNTIME_DIR/freesynergy/person.sock, $XDG_DATA_HOME/freesynergy/modules/person\nServes the form source of the module person (forms me, rows, single-record; command me.create); nobody names an actor, the connection (same user) only decides who may call.\n--sample serves fixed test data instead of the store (for frontends and tests; the same rights, hello says fake).";
 
 /// There is no `--actor`: the words that name one are refused with the reason (fs-rpc would take it; this module does not).
 ///
@@ -58,10 +58,17 @@ pub fn serve_command(args: impl IntoIterator<Item = OsString>) -> i32 {
     serve_with(args, &mut io::stderr())
 }
 
+/// The words without `--sample`, and whether it was there (the one word of this module that fs-rpc does not know).
+fn take_sample(args: Vec<OsString>) -> (bool, Vec<OsString>) {
+    let sample = args.iter().any(|a| a == "--sample");
+    let rest = args.into_iter().filter(|a| a != "--sample").collect();
+    (sample, rest)
+}
+
 /// [`serve_command`] with the words for the person written to `err` (a test reads them).
 #[must_use]
 pub fn serve_with(args: impl IntoIterator<Item = OsString>, err: &mut dyn Write) -> i32 {
-    let args = words(args);
+    let (sample, args) = take_sample(words(args));
     let options = reject_actor(args.iter().map(OsString::as_os_str))
         .and_then(|()| ServerOptions::parse(PROGRAM, args));
     let options = match options {
@@ -77,22 +84,20 @@ pub fn serve_with(args: impl IntoIterator<Item = OsString>, err: &mut dyn Write)
     };
     let (socket, data) = (options.socket, options.data);
     let beat_socket = socket.clone();
-    let identity = ServerIdentity::new("fs-person-service", env!("CARGO_PKG_VERSION"));
-    let served = run_until_signal_callers(&socket, identity, || async move {
-        let data = prepare_data_dir(&data)?;
-        let store = TursoStore::open(data.join("objects.db"))
-            .await
-            .map_err(io::Error::other)?;
-        // "me" is read here, once, before the loop serves; a store that holds no anchor does not start
-        let service = PersonService::open(Arc::new(StoreMe(store)), |why| {
-            eprintln!(
-                "fs-person-service: connection dropped, the system did not say who it is: {why:?}"
-            );
+    let served = if sample {
+        // fixed test data: no folder, no store, the same rights (`hello` says `fake`)
+        run(&socket, &beat_socket, || async {
+            Ok(Arc::new(SampleRepo::new()))
         })
-        .await
-        .map_err(io::Error::other)?;
-        keep_beat(service, &beat_socket)
-    });
+    } else {
+        run(&socket, &beat_socket, || async move {
+            let data = prepare_data_dir(&data)?;
+            let store = TursoStore::open(data.join("objects.db"))
+                .await
+                .map_err(io::Error::other)?;
+            Ok(Arc::new(PersonStore(store)))
+        })
+    };
     match served {
         Ok(()) => 0,
         Err(e) if e.kind() == io::ErrorKind::Interrupted => {
@@ -106,13 +111,38 @@ pub fn serve_with(args: impl IntoIterator<Item = OsString>, err: &mut dyn Write)
     }
 }
 
+/// Serve the repository `open` makes: "me" is read here, once, before the loop serves; a store that holds no anchor does not start.
+fn run<R, F, Fut>(
+    socket: &std::path::Path,
+    beat_socket: &std::path::Path,
+    open: F,
+) -> io::Result<()>
+where
+    R: PersonRepo + 'static,
+    F: FnOnce() -> Fut,
+    Fut: std::future::Future<Output = io::Result<Arc<R>>>,
+{
+    let identity = ServerIdentity::new("fs-person-service", env!("CARGO_PKG_VERSION"));
+    run_until_signal_callers(socket, identity, || async move {
+        let repo = open().await?;
+        let service = PersonService::open(repo, |why| {
+            eprintln!(
+                "fs-person-service: connection dropped, the system did not say who it is: {why:?}"
+            );
+        })
+        .await
+        .map_err(io::Error::other)?;
+        keep_beat(service, beat_socket)
+    })
+}
+
 /// The heartbeat of the service (ADR 0104, a duty of every module service): started once the socket is bound, ticked every second
 /// by the loop that serves, so a loop that stands still is told apart from a healthy one. fs-rpc has it on Unix only.
 #[cfg(unix)]
-fn keep_beat(
-    service: PersonService<StoreMe<TursoStore>>,
+fn keep_beat<R: PersonRepo + 'static>(
+    service: PersonService<R>,
     socket: &std::path::Path,
-) -> io::Result<PersonService<StoreMe<TursoStore>>> {
+) -> io::Result<PersonService<R>> {
     let beat = std::rc::Rc::new(fs_rpc::Heartbeat::start(socket)?);
     let tick = beat.clone();
     let ticker = tokio::task::spawn_local(async move {
@@ -127,10 +157,10 @@ fn keep_beat(
 
 #[cfg(not(unix))]
 #[allow(clippy::unnecessary_wraps)] // the same signature as on Unix
-fn keep_beat(
-    service: PersonService<StoreMe<TursoStore>>,
+fn keep_beat<R: PersonRepo + 'static>(
+    service: PersonService<R>,
     _: &std::path::Path,
-) -> io::Result<PersonService<StoreMe<TursoStore>>> {
+) -> io::Result<PersonService<R>> {
     Ok(service)
 }
 

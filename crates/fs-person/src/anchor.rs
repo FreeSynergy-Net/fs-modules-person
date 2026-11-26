@@ -26,6 +26,12 @@ impl Anchor {
         }
     }
 
+    /// The anchor with a given id (sample data and tests: a fixed person, no randomness).
+    #[must_use]
+    pub fn with_id(id: ObjectId) -> Self {
+        Self { id }
+    }
+
     /// The anchor of a stored object, or `None` if the object is not a person with that form.
     #[must_use]
     pub fn from_object(o: &StoredObject) -> Option<Self> {

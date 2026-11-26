@@ -9,16 +9,16 @@ use fs_interfaces::module::{
     Actor, Applied, Caller, ChangesQuery, Context, Invocation, ModuleCore, PageQuery, StepRef,
 };
 use fs_objects::{Envelope, StoredObject, TursoStore};
-use fs_person::{Anchor, CONTENT_TYPE, MeRepo, PROFILE_TYPE, Profile, StoreMe};
+use fs_person::{Anchor, CONTENT_TYPE, MeRepo, PROFILE_TYPE, PersonStore, Profile};
 use fs_person_service::{Owner, PersonCore, profile_records, state_word};
 use serde_json::json;
 
 async fn core() -> (
-    PersonCore<StoreMe<TursoStore>>,
+    PersonCore<PersonStore<TursoStore>>,
     Context,
-    Arc<StoreMe<TursoStore>>,
+    Arc<PersonStore<TursoStore>>,
 ) {
-    let repo = Arc::new(StoreMe(TursoStore::open_in_memory().await.unwrap()));
+    let repo = Arc::new(PersonStore(TursoStore::open_in_memory().await.unwrap()));
     let owner = Owner::read(&*repo).await.unwrap();
     let who = Caller::Connection {
         system_id: "1000".into(),
@@ -73,8 +73,8 @@ async fn the_core_is_narrower_than_the_contract_and_says_so() {
     assert_eq!(none.changes.len(), 0);
     let blob = core.blob(&cx, "r", "f").await.unwrap_err();
     assert_eq!(blob.kind, "unsupported");
-    let form = core.page(&cx, query("rows@1.0.0")).await.unwrap_err();
-    assert_eq!(form.kind, "unknown-form", "the lists come with M3");
+    let form = core.page(&cx, query("tiles@1.0.0")).await.unwrap_err();
+    assert_eq!(form.kind, "unknown-form", "tiles is no form of this module");
 }
 
 fn profile(n: u8, name: &str, describes: Option<&str>) -> Profile {

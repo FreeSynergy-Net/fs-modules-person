@@ -13,5 +13,77 @@
       "id": "reference",
       "type": "text"
     }
+  },
+  {
+    "name": "rows",
+    "version": "1.0.0",
+    "type": "Profile",
+    "map": {
+      "items": "Profile",
+      "label": "label",
+      "preview": "media",
+      "state": "state",
+      "columns": ["organizations", "titles", "emails", "phones", "nicknames"]
+    },
+    "fields": {
+      "label": "text",
+      "media": "image",
+      "state": "text",
+      "organizations": "text",
+      "titles": "text",
+      "emails": "email",
+      "phones": "text",
+      "nicknames": "text"
+    }
+  },
+  {
+    "name": "single-record",
+    "version": "1.2.0",
+    "type": "Profile",
+    "map": {
+      "item": "Profile",
+      "label": "label",
+      "preview": "media",
+      "state": "state",
+      "fields": [
+        "kind", "language", "created", "updated", "members", "relatedTo", "name", "nicknames",
+        "organizations", "titles", "grammaticalGender", "pronouns", "emails", "onlineServices",
+        "phones", "preferredLanguages", "calendars", "schedulingAddresses", "addresses",
+        "cryptoKeys", "directories", "links", "anniversaries", "keywords", "notes",
+        "personalInfo", "describes"
+      ]
+    },
+    "fields": {
+      "label": "text",
+      "media": "image",
+      "state": "text",
+      "kind": "choice",
+      "language": "text",
+      "created": "date-time",
+      "updated": "date-time",
+      "members": "reference",
+      "relatedTo": "reference",
+      "name": "text",
+      "nicknames": "text",
+      "organizations": "text",
+      "titles": "text",
+      "grammaticalGender": "choice",
+      "pronouns": "text",
+      "emails": "email",
+      "onlineServices": "link",
+      "phones": "text",
+      "preferredLanguages": "text",
+      "calendars": "link",
+      "schedulingAddresses": "link",
+      "addresses": "text",
+      "cryptoKeys": "link",
+      "directories": "link",
+      "links": "link",
+      "anniversaries": "date",
+      "keywords": "keywords",
+      "notes": "text",
+      "personalInfo": "text",
+      "describes": "reference"
+    }
   }
 ]

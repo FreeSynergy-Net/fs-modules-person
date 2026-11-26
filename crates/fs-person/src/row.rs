@@ -5,7 +5,8 @@
 
 use fs_objects::ObjectId;
 
-use crate::{Anchor, Profile};
+use crate::preferred::{COLUMNS, preferred};
+use crate::{Anchor, Profile, values_of};
 
 /// Whom a profile hangs on.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -28,6 +29,10 @@ pub struct Row {
     pub label: String,
     /// Whom the profile hangs on.
     pub state: State,
+    /// The first picture of the card (`media`, no sound, no `data:` file), the `preview` of the form.
+    pub preview: Option<String>,
+    /// The columns the card has a value for, as (field, the one value), in the order of [`COLUMNS`].
+    pub columns: Vec<(&'static str, String)>,
 }
 
 impl State {
@@ -51,6 +56,11 @@ impl Row {
             id: profile.id,
             label: profile.card.display_name(),
             state: State::of(profile, me),
+            preview: values_of(&profile.card, "media").and_then(|v| v.into_iter().next()),
+            columns: COLUMNS
+                .iter()
+                .filter_map(|c| preferred(&profile.card, c).map(|v| (*c, v)))
+                .collect(),
         }
     }
 }

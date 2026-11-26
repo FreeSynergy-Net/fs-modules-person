@@ -7,12 +7,18 @@ use fs_interfaces::capabilities::{is_known, is_well_formed};
 use serde_json::Value;
 
 fn keys() -> Vec<String> {
-    let file: Value = serde_json::from_str(include_str!("../../../catalog/commands.json")).unwrap();
+    let file: Value = serde_json::from_str(include_str!("../../../catalog/commands.json"))
+        .expect("catalog/commands.json is not valid JSON");
     file["commands"]
         .as_array()
-        .unwrap()
+        .expect("catalog/commands.json: `commands` is not an array")
         .iter()
-        .map(|c| c["capability"].as_str().unwrap().to_owned())
+        .map(|c| {
+            c["capability"]
+                .as_str()
+                .expect("catalog/commands.json: a command has no string `capability`")
+                .to_owned()
+        })
         .collect()
 }
 

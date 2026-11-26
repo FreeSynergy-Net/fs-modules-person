@@ -2,6 +2,11 @@
 
 Version = tag.
 
+## Unreleased
+
+- Pin wave 12 (only pins and lock, no code, no version change): `fs-rpc` `rev dba7125f` (was `c0cbf7ad`; that head moves `fs-settings` of fs-components to `f2e90244`). This module has no fs-components in its own graph (the lock holds none); the pin only keeps the whole cascade on one fs-rpc head. `cargo tree -d` shows no fs-* twice. Written with the help of Claude (Anthropic).
+- Auf Deutsch: Pin-Welle 12 (nur Pins und Lock, kein Code, keine Versionsänderung): `fs-rpc` `rev dba7125f` (war `c0cbf7ad`; dieser Kopf setzt `fs-settings` aus fs-components auf `f2e90244`). Dieses Modul hat fs-components nicht im eigenen Graphen (das Lock enthält keins); der Pin hält nur die ganze Kaskade auf einem fs-rpc-Kopf. `cargo tree -d` zeigt kein fs-* doppelt. Geschrieben mit Hilfe von Claude (Anthropic).
+
 ## 0.0.3
 
 - The anchor is born at the first start of the service: `fs-person-service` now makes "me" itself when its data folder has none (new `PersonService::open_anchored`, `PersonCore::ensure_me`, file `bootstrap.rs`; Lazy Initialization). It is the SAME birth and the same rules as `me.create` (the service asks `PersonRules` for `me.create` as the person of this installation on its own connection; a refusal or a failed store ends the start with exit code 1, it never runs on without "me"); the log names the new anchor as the actor of its own birth. A second start finds "me" and writes nothing (one person per data folder, one log entry); strangers (bots, other persons) stay refused by `Guarded`. `me.create` stays and answers `me-exists` after the autostart; its help now says the service does this at the start. New test `tests/anchor_at_start.rs` (empty folder, double start with a file store, existing "me", `me.create` afterwards, a refusing rule writes nothing, a bot stays refused). Honest: this removes the cause of `owner-no-me` only once the host starts this version (0.0.3) of the service; the planning service needs the new person pin and a release of both. Written with the help of Claude (Anthropic).

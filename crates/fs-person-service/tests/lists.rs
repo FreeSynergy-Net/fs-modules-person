@@ -189,7 +189,7 @@ async fn the_single_record_repeats_the_values_of_a_field() {
         )
         .await
         .unwrap();
-        assert!(none.rows.is_empty());
+        assert_eq!(none.rows.len(), 0);
         let junk = page_with(&source, FORM_RECORD, "no id", "", 0)
             .await
             .err()
@@ -242,7 +242,7 @@ async fn no_second_person_next_to_the_anchor() {
         let as_profile = page_with(&source, FORM_RECORD, &anchor, "", 0)
             .await
             .unwrap();
-        assert!(as_profile.rows.is_empty());
+        assert_eq!(as_profile.rows.len(), 0);
         // two profiles describe the anchor and are two rows with the same state, not two people
         let mine = list
             .rows

@@ -15,7 +15,7 @@ use serde_json::json;
 fn object_of(p: &Profile) -> StoredObject {
     let mut e = Envelope::new(PROFILE_TYPE, p.card.display_name());
     e.id = p.id;
-    e.describes = p.describes.clone();
+    e.describes.clone_from(&p.describes);
     StoredObject::new(e, CONTENT_TYPE, p.card.to_value())
 }
 

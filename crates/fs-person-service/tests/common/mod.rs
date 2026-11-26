@@ -190,7 +190,7 @@ pub async fn seeded() -> Repo {
         .map(|p| {
             let mut e = Envelope::new(PROFILE_TYPE, p.card.display_name());
             e.id = p.id;
-            e.describes = p.describes.clone();
+            e.describes.clone_from(&p.describes);
             Write::Put {
                 object: StoredObject::new(e, CONTENT_TYPE, p.card.to_value()),
                 expect: None,

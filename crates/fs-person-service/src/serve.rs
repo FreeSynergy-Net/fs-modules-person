@@ -83,11 +83,14 @@ pub fn serve_with(args: impl IntoIterator<Item = OsString>, err: &mut dyn Write)
         let store = TursoStore::open(data.join("objects.db"))
             .await
             .map_err(io::Error::other)?;
-        let service = PersonService::new(Arc::new(StoreMe(store)), |why| {
+        // "me" is read here, once, before the loop serves; a store that holds no anchor does not start
+        let service = PersonService::open(Arc::new(StoreMe(store)), |why| {
             eprintln!(
                 "fs-person-service: connection dropped, the system did not say who it is: {why:?}"
             );
-        });
+        })
+        .await
+        .map_err(io::Error::other)?;
         keep_beat(service, &beat_socket)
     });
     match served {

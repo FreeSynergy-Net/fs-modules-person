@@ -11,21 +11,29 @@ use fs_person_service::PersonService;
 use tokio::sync::oneshot;
 
 pub type Repo = Arc<StoreMe<TursoStore>>;
-
 /// A service over an in-memory store; the repo is returned so a test can look into the store (the log, the rows).
 pub async fn serve(dir: &std::path::Path) -> (std::path::PathBuf, Repo, oneshot::Sender<()>) {
     let repo = Arc::new(StoreMe(TursoStore::open_in_memory().await.unwrap()));
+    let service = PersonService::open(repo.clone(), |_| {}).await.unwrap();
+    let (socket, stop) = serve_service(dir, service).await;
+    (socket, repo, stop)
+}
+
+/// The same over the service a test built (other ports, other rules): bound on `person.sock` in `dir`.
+pub async fn serve_service(
+    dir: &std::path::Path,
+    service: PersonService<StoreMe<TursoStore>>,
+) -> (std::path::PathBuf, oneshot::Sender<()>) {
     let socket = dir.join("person.sock");
     let bound = fs_rpc::bind_socket(&socket).await.unwrap();
     let (stop, stopped) = oneshot::channel::<()>();
-    let service = PersonService::new(repo.clone(), |_| {});
     tokio::task::spawn_local(async move {
         let _ = fs_rpc::serve_callers(bound, service, async {
             let _ = stopped.await;
         })
         .await;
     });
-    (socket, repo, stop)
+    (socket, stop)
 }
 
 /// The records of one page: id, the commands the record may run, the values by field name; and the commands of the set.

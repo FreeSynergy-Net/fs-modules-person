@@ -28,11 +28,13 @@ impl<S: Store> MeRepo for StoreMe<S> {
         }
     }
 
-    async fn create_me(&self) -> Result<Created> {
-        if let Some(anchor) = self.me().await? {
-            return Ok(Created { anchor, new: false });
+    async fn create_me_as(&self, anchor: Anchor) -> Result<Created> {
+        if let Some(found) = self.me().await? {
+            return Ok(Created {
+                anchor: found,
+                new: false,
+            });
         }
-        let anchor = Anchor::new();
         let by = By::new(anchor.urn(), anchor.person_ref());
         match self.0.birth(&by, anchor.to_object()).await {
             Ok(Outcome::Done(_)) => Ok(Created { anchor, new: true }),

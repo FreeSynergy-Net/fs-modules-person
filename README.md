@@ -4,7 +4,7 @@ FreeSynergy person module: the one person of an installation (the anchor, an AS2
 module service with its form source. Profile data (names, addresses, links to accounts) comes later, as profiles of this anchor.
 
 **Status: `fs-person` and `fs-person-service` exist.** The anchor (`Anchor`), the port `MeRepo`, its adapter `StoreMe` over fs-objects and `StoreOwner`
-(a `LocalOwner` of fs-interfaces) are in. The service serves the form source (level 1): the command `me.create` and the form `me`; nobody names an actor (no `--actor`, no argument); the connection only admits the same user, and the log names the anchor as the actor of its own birth. The feature `client` of `fs-person-service` gives other modules `PersonServiceOwner` (a `LocalOwner`: gets or starts the service, reads the form `me`, never creates it).
+(a `LocalOwner` of fs-interfaces) are in. The service serves the form source as `Guarded<PersonCore>` (rights: `PersonRules`, only the owner as a person): the command `me.create` and the form `me`; nobody names an actor (no `--actor`, no argument); the connection only admits the same user, and the log names the anchor as the actor of its own birth. The feature `client` of `fs-person-service` gives other modules `PersonServiceOwner` (a `LocalOwner`: gets or starts the service, reads the form `me`, never creates it).
 
 ## Crates
 

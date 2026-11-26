@@ -1,5 +1,6 @@
-//! `fs-person-service`: the person module as a service (one process per person) over fs-rpc. It serves the form source (level 1)
-//! of the module `person`: the command `me.create` and the form `me` (the one person of this installation, or nothing yet).
+//! `fs-person-service`: the person module as a service (one process per person) over fs-rpc. It serves the form source of the
+//! module `person` as `Guarded<PersonCore>` (rights: `PersonRules`):
+//! the command `me.create` and the form `me` (the one person of this installation, or nothing yet).
 //!
 //! Nobody names the actor: there is no `--actor` and no `actor` argument. The connection only decides who may call (fs-rpc admits
 //! the same user, read from the system); the log names the anchor as the actor of its own birth, not the caller (the tie of a user
@@ -14,12 +15,20 @@
 
 #[cfg(feature = "client")]
 mod client;
+mod core;
+mod forms;
+mod owner;
+mod rows;
+mod rules;
 mod serve;
 mod service;
-mod source;
 
 #[cfg(feature = "client")]
 pub use client::{PersonServiceOwner, service_program};
+pub use core::PersonCore;
+pub use forms::{COMMAND_CREATE, FORM_ME, LEVEL, PROVIDER};
+pub use owner::Owner;
+pub use rows::{me_record, profile_records, state_word};
+pub use rules::{NO_CONNECTION, NOT_A_PERSON, NOT_THE_OWNER, PersonRules};
 pub use serve::{PROGRAM, reject_actor, serve_command, serve_with};
 pub use service::PersonService;
-pub use source::{COMMAND_CREATE, FORM_ME, LEVEL, PROVIDER};

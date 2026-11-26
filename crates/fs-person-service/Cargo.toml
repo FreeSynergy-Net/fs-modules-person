@@ -17,7 +17,7 @@ path = "src/main.rs"
 
 [features]
 # `PersonServiceOwner`: the `LocalOwner` for other modules, over the service (reads the form `me`, never creates).
-client = ["dep:fs-types", "dep:uuid"]
+client = ["dep:uuid"]
 
 [dependencies]
 fs-person = { path = "../fs-person", version = "0.0.1" }
@@ -28,7 +28,7 @@ fs-objects = { git = "https://github.com/FreeSynergy-Net/fs-objects", rev = "e38
 capnp = "0.27"
 capnp-rpc = "0.27"
 tokio = { version = "1", features = ["rt", "net", "sync", "time"] }
-fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", rev = "722d3ce0156711d40cb278f2e835e865d9448290", version = "0.0.7", optional = true }
+fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", rev = "722d3ce0156711d40cb278f2e835e865d9448290", version = "0.0.7" }
 uuid = { version = "1", optional = true }
 
 [[test]]
@@ -37,7 +37,6 @@ required-features = ["client"]
 
 [dev-dependencies]
 fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "71809eaa1e974841762315c7b3187276469ec0bb", version = "0.3.0", features = ["fake"] }
-fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", rev = "722d3ce0156711d40cb278f2e835e865d9448290", version = "0.0.7" }
 serde_json = "1"
 tempfile = "3"
 uuid = "1"

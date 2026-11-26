@@ -37,7 +37,7 @@ async fn the_tiles_carry_one_preferred_value_per_fact() {
         let rows = page_with(&source, FORM_ROWS, "all", "", 0).await.unwrap();
         assert_eq!(tiles.total, Some(7));
         assert_eq!(tiles.rows.len(), rows.rows.len());
-        assert!(tiles.may.is_empty());
+        assert_eq!(tiles.may, Vec::<String>::new());
         let profiles = sample_profiles();
         let mut without_organization = 0;
         for (tile, row) in tiles.rows.iter().zip(&rows.rows) {

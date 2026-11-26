@@ -45,6 +45,27 @@ impl<R: PersonRepo + 'static> PersonCore<R> {
     pub fn with_rules(repo: Arc<R>, owner: Owner, rules: Box<dyn RightsRules>) -> Self {
         Self { repo, owner, rules }
     }
+
+    /// The one birth, shared by `me.create` and the start of the service ([`PersonCore::ensure_me`]): the repository births the
+    /// reserved anchor once (the anchor is the actor of its own birth), and says `me-exists` where "me" was there already.
+    pub(crate) async fn birth(&self) -> Result<Applied, Refusal> {
+        let made = self
+            .repo
+            .create_me_as(self.owner.reserved())
+            .await
+            .map_err(|e| broken(&e))?;
+        // another handle may have been first: new connections act for the stored anchor
+        self.owner.settle(&made.anchor);
+        let mut done = Applied::default();
+        done.record = made.anchor.urn();
+        (if made.new { "me-created" } else { "me-exists" }).clone_into(&mut done.text);
+        Ok(done)
+    }
+
+    /// The owner of this installation (for the context of the service itself, `bootstrap.rs`).
+    pub(crate) fn owner(&self) -> &Owner {
+        &self.owner
+    }
 }
 
 impl<R: PersonRepo + 'static> ModuleCore for PersonCore<R> {
@@ -88,17 +109,7 @@ impl<R: PersonRepo + 'static> ModuleCore for PersonCore<R> {
         match (c.command.as_str(), c.record.as_deref().unwrap_or("")) {
             (COMMAND_CREATE, "") => {
                 no_args(&c.args)?;
-                let made = self
-                    .repo
-                    .create_me_as(self.owner.reserved())
-                    .await
-                    .map_err(|e| broken(&e))?;
-                // another handle may have been first: new connections act for the stored anchor
-                self.owner.settle(&made.anchor);
-                let mut done = Applied::default();
-                done.record = made.anchor.urn();
-                (if made.new { "me-created" } else { "me-exists" }).clone_into(&mut done.text);
-                Ok(done)
+                self.birth().await
             }
             (COMMAND_CREATE, _) => Err(refuse(
                 "bad-arguments",

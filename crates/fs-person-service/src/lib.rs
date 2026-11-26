@@ -13,6 +13,7 @@
 // The generated `Server` trait is async for every method, also those that never wait.
 #![allow(clippy::unused_async_trait_impl)]
 
+mod bootstrap;
 #[cfg(feature = "client")]
 mod client;
 mod core;

@@ -1,13 +1,13 @@
 {
   "module": "person",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "contract": "person",
   "scope": "own-contract",
   "commands": [
     {
       "capability": "me.create", "call": "FormSource.invoke", "access": "write",
       "params": [],
-      "help": { "topic": "person-me-create", "text": { "en": "Create the one person of this installation (the anchor). If it exists, the same person is answered and nothing is written. Nobody can name an actor: there is no argument; the log names the new person (the anchor) as the actor of its own birth. The connection only decides who may call (the same user).", "de": "Legt die eine Person dieser Installation an (den Anker). Gibt es sie schon, kommt dieselbe Person zurueck und nichts wird geschrieben. Der Niemand kann einen Akteur nennen: es gibt kein Argument; im Protokoll steht die neue Person (der Anker) als Akteur ihrer eigenen Geburt. Die Verbindung entscheidet nur, wer rufen darf (derselbe Benutzer)." } }
+      "help": { "topic": "person-me-create", "text": { "en": "Create the one person of this installation (the anchor). The service already does this at its first start, so the command is for the case that \"me\" is missing; it is not needed after a normal start. If it exists, the same person is answered and nothing is written. Nobody can name an actor: there is no argument; the log names the new person (the anchor) as the actor of its own birth. The connection only decides who may call (the same user).", "de": "Legt die eine Person dieser Installation an (den Anker). Der Dienst tut das schon bei seinem ersten Start; der Befehl gilt also für den Fall, dass \"me\" fehlt, und ist nach einem normalen Start nicht nötig. Gibt es sie schon, kommt dieselbe Person zurueck und nichts wird geschrieben. Niemand kann einen Akteur nennen: es gibt kein Argument; im Protokoll steht die neue Person (der Anker) als Akteur ihrer eigenen Geburt. Die Verbindung entscheidet nur, wer rufen darf (derselbe Benutzer)." } }
     }
   ]
 }

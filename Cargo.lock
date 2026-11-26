@@ -617,7 +617,7 @@ dependencies = [
 
 [[package]]
 name = "fs-person"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "async-trait",
  "fs-interfaces",
@@ -641,7 +641,7 @@ dependencies = [
 
 [[package]]
 name = "fs-person-service"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "capnp",
  "capnp-rpc",

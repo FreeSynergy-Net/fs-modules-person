@@ -38,6 +38,27 @@ impl<R: PersonRepo + 'static> PersonService<R> {
         Self::open_as(repo, OsUserIsPerson, refused).await
     }
 
+    /// [`open`](Self::open) and, if the folder has no "me" yet, the birth of the anchor (the first start; see `bootstrap.rs`): the
+    /// same birth and the same rules as `me.create`; a second start finds "me" and writes nothing.
+    ///
+    /// # Errors
+    /// As [`open`](Self::open), and: the rules refuse the service, or the birth fails (the service does not start).
+    pub async fn open_anchored(
+        repo: Arc<R>,
+        refused: impl Fn(&CallerError) + 'static,
+    ) -> fs_objects::Result<Self> {
+        let owner = Owner::read(&*repo).await?;
+        let core = PersonCore::new(repo, owner.clone());
+        core.ensure_me()
+            .await
+            .map_err(|r| fs_objects::Error::Invalid(format!("{}: {}", r.kind, r.detail)))?;
+        Ok(Self::guarding(
+            core,
+            Ports::new(OsUserIsPerson, owner),
+            refused,
+        ))
+    }
+
     /// [`open`](Self::open) with another source of "person or bot" (a test that shows a bot is refused).
     ///
     /// # Errors

@@ -121,7 +121,7 @@ pub fn serve_with(args: impl IntoIterator<Item = OsString>, err: &mut dyn Write)
     }
 }
 
-/// Serve the repository `open` makes: "me" is read here, once, before the loop serves; a store that holds no anchor does not start.
+/// Serve the repository `open` makes: "me" is read here, once, before the loop serves, and born if the folder has none ([`PersonService::open_anchored`]); a failing birth does not start.
 fn run<R, F, Fut>(
     socket: &std::path::Path,
     beat_socket: &std::path::Path,
@@ -135,7 +135,7 @@ where
     let identity = ServerIdentity::new("fs-person-service", env!("CARGO_PKG_VERSION"));
     run_until_signal_callers(socket, identity, || async move {
         let repo = open().await?;
-        let service = PersonService::open(repo, |why| {
+        let service = PersonService::open_anchored(repo, |why| {
             eprintln!(
                 "fs-person-service: connection dropped, the system did not say who it is: {why:?}"
             );

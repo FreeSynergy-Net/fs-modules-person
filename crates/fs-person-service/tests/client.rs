@@ -103,35 +103,36 @@ fn tmp() -> tempfile::TempDir {
 }
 
 /// P1 (client): the contract of `LocalOwner` (the three rules) holds against the real service; two questions, one id; and the
-/// id is the one of the module, which the client did not make.
+/// id is the one of the module, which the client did not make (the service made it at its first start).
 #[test]
 fn p1_client_owner_passes_the_contract() {
     let dir = tmp();
     let (owner, stop) = owner_in(dir.path());
-    // The first question starts the service; there is no "me" yet and the client does not make one.
-    let first = owner.owner();
-    assert!(matches!(first, Err(OwnerProblem::NoMe { .. })), "{first:?}");
-    assert!(check(&owner).is_ok(), "NoMe has a reason");
-    let urn = create_me(&stop.0);
-    let me = owner.owner().expect("me exists now");
-    assert_eq!(me.id.canonical(), urn);
-    assert_eq!(owner.owner().unwrap(), me, "two questions, one id");
+    // The first question starts the service, which births "me" itself at its start; the client only reads it.
+    let me = owner.owner().expect("the service made me at its start");
     check(&owner).unwrap();
+    assert_eq!(owner.owner().unwrap(), me, "two questions, one id");
+    assert_eq!(
+        create_me(&stop.0),
+        me.id.canonical(),
+        "me.create finds the same one"
+    );
 }
 
-/// The client never creates: asking many times without "me" leaves the form empty.
+/// The client never creates: asking many times changes nothing; the one anchor is the one the service made at its start, and
+/// `me.create` afterwards finds it (`me-exists`), it is never a second one.
 #[test]
 fn p1_client_never_creates() {
     let dir = tmp();
     let (owner, stop) = owner_in(dir.path());
+    let first = owner.owner().expect("the service made me at its start");
     for _ in 0..3 {
-        assert!(matches!(owner.owner(), Err(OwnerProblem::NoMe { .. })));
+        assert_eq!(owner.owner().unwrap(), first);
     }
-    let urn = create_me(&stop.0);
     assert_eq!(
-        owner.owner().unwrap().id.canonical(),
-        urn,
-        "the first me.create of the person is the first anchor"
+        create_me(&stop.0),
+        first.id.canonical(),
+        "the anchor of the start is the only anchor"
     );
 }
 

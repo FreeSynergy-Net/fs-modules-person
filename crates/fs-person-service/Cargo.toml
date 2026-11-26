@@ -20,7 +20,7 @@ path = "src/main.rs"
 client = ["dep:uuid"]
 
 [dependencies]
-fs-person = { path = "../fs-person", version = "0.0.2" }
+fs-person = { path = "../fs-person", version = "0.0.3" }
 # One source per library, the same as fs-person and the planning module (rev AND version, licence gate).
 fs-rpc = { git = "https://github.com/FreeSynergy-Net/fs-rpc", rev = "c0cbf7adfbe315c4452bc6a6e916a317fd24f454", version = "0.1.4" }
 fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "92dbb53e9c9ea2c48e85a27712f0456f2a7b8161", version = "0.3.0" }

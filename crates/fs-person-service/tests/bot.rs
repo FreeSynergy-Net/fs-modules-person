@@ -9,8 +9,8 @@ mod common;
 use common::{page_with, seeded, serve_service};
 use fs_interfaces::formsource_capnp::form_source;
 use fs_interfaces::module::{Ask, Context, HiddenReason, RightsRules, Verdict};
-use fs_person_service::{FORM_RECORD, FORM_ROWS, Owner, PersonCore, PersonService};
-use fs_rpc::{AllBots, Ports};
+use fs_person_service::{FORM_RECORD, FORM_ROWS, FORM_TILES, Owner, PersonCore, PersonService};
+use fs_rpc::{AllBots, FixedPerson, OsUserIsPerson, Ports};
 use tokio::task::LocalSet;
 
 /// Pattern: Strategy (the wrong variant of `RightsRules`) - says yes to everything.
@@ -48,6 +48,9 @@ async fn a_bot_sees_nothing_and_with_lax_rules_it_would() {
                     .await
                     .unwrap();
                 let list = page_with(&c.client, FORM_ROWS, "all", "", 0).await.unwrap();
+                let tiles = page_with(&c.client, FORM_TILES, "all", "", 0)
+                    .await
+                    .unwrap();
                 let known = page_with(&c.client, FORM_RECORD, FIRST, "", 0)
                     .await
                     .unwrap();
@@ -62,9 +65,10 @@ async fn a_bot_sees_nothing_and_with_lax_rules_it_would() {
                 .unwrap();
                 if lax {
                     assert_eq!(list.rows.len(), 7, "AllowAll lets the bot read");
+                    assert_eq!(tiles.rows.len(), 7, "AllowAll lets the bot read tiles");
                     assert_eq!(known.rows.len(), 1);
                 } else {
-                    for shown in [&list, &known, &unknown] {
+                    for shown in [&list, &tiles, &known, &unknown] {
                         assert!(shown.rows.is_empty() && shown.may.is_empty());
                         assert_eq!((shown.total, shown.next.as_str()), (None, ""));
                     }
@@ -72,4 +76,32 @@ async fn a_bot_sees_nothing_and_with_lax_rules_it_would() {
             })
             .await;
     }
+}
+
+/// Another person (a connection that acts for somebody else) gets an empty, refused page on the tiles as on the list.
+#[tokio::test(flavor = "current_thread")]
+async fn another_person_sees_no_tiles() {
+    let repo = seeded().await;
+    let dir = tempfile::Builder::new().prefix("fs").tempdir().unwrap();
+    LocalSet::new()
+        .run_until(async {
+            let owner = Owner::read(&*repo).await.unwrap();
+            let core = PersonCore::new(repo.clone(), owner);
+            let other = fs_person::Anchor::new().person_ref();
+            let service = PersonService::guarding(
+                core,
+                Ports::new(OsUserIsPerson, FixedPerson(other)),
+                |_| {},
+            );
+            let (socket, _stop) = serve_service(dir.path(), service).await;
+            let c = fs_rpc::connect::<form_source::Client>(&socket)
+                .await
+                .unwrap();
+            for form in [FORM_TILES, FORM_ROWS] {
+                let shown = page_with(&c.client, form, "all", "", 0).await.unwrap();
+                assert!(shown.rows.is_empty() && shown.may.is_empty(), "{form}");
+                assert_eq!((shown.total, shown.next.as_str()), (None, ""), "{form}");
+            }
+        })
+        .await;
 }

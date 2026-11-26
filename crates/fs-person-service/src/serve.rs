@@ -20,7 +20,7 @@ use crate::service::PersonService;
 /// `Control.version` and for the data folder `modules/person`.
 pub const PROGRAM: &str = "person";
 
-const USAGE: &str = "fs-person-service [serve] [--socket PATH] [--data DIR] [--instance DOMAIN] [--sample]\nDefaults: $XDG_RUNTIME_DIR/freesynergy/person.sock (person-sample.sock with --sample), $XDG_DATA_HOME/freesynergy/modules/person\nServes the form source of the module person (forms me, rows, single-record; command me.create); nobody names an actor, the connection (same user) only decides who may call.\n--sample serves fixed test data instead of the store (for frontends and tests; the same rights, hello says fake, its own socket person-sample.sock).";
+const USAGE: &str = "fs-person-service [serve] [--socket PATH] [--data DIR] [--instance DOMAIN] [--sample]\nDefaults: $XDG_RUNTIME_DIR/freesynergy/person.sock (person-sample.sock with --sample), $XDG_DATA_HOME/freesynergy/modules/person\nServes the form source of the module person (forms me, rows, tiles, single-record; command me.create); nobody names an actor, the connection (same user) only decides who may call.\n--sample serves fixed test data instead of the store (for frontends and tests; the same rights, hello says fake, its own socket person-sample.sock).";
 
 /// The name of the sample service for its socket (`$XDG_RUNTIME_DIR/freesynergy/person-sample.sock`): another file than the one of the
 /// real module, so the sample "me" is never found where the real "me" is looked for.

@@ -1,4 +1,4 @@
-//! The pages of the module: the form `me`, the list `rows` and the single record.
+//! The pages of the module: the form `me`, the lists `rows` and `tiles` and the single record.
 //!
 //! Pattern: Template Method (steps, the part this module owns) – one function per form, each reads through the ports and
 //! projects (`rows.rs`); the check of rights stays in `Guarded`. Deviation: before any read each page asks the rules once whether

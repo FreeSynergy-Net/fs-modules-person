@@ -1,5 +1,5 @@
 //! The person module as a `ModuleCore` for `fs_rpc::Guarded`: the forms `me`, `rows` (the profiles as a list) and
-//! `single-record` (one profile as a whole), and the command `me.create`, and nothing else.
+//! `tiles` (the same profiles as tiles), `single-record` (one profile as a whole), and the command `me.create`, and nothing else.
 //!
 //! Pattern: Template Method (steps) – this delivers only `page` and `blob` (no image or file field); the order
 //! check -> change -> report stands once in `Guarded<PersonCore>`. Adapter: the port [`PersonRepo`] (the anchor and the profiles)
@@ -88,7 +88,7 @@ impl<R: PersonRepo + 'static> ModuleCore for PersonCore<R> {
 
     async fn page(&self, cx: &Context, q: PageQuery) -> Result<Page, Refusal> {
         let Some(form) = served(&q.form) else {
-            let why = "this module draws me@1.0, rows@1.0 and single-record@1.2";
+            let why = "this module draws me@1.0, rows@1.0, tiles@1.1 and single-record@1.2";
             return Err(refuse("unknown-form", 404, why));
         };
         if refused(self.rules(), cx).is_some() {

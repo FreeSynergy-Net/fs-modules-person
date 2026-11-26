@@ -1,6 +1,6 @@
 [package]
 name = "fs-person"
-description = "The person module of FreeSynergy: the one person of this installation (the anchor), no profile data yet"
+description = "The person module of FreeSynergy: the one person of this installation (the anchor) and its profiles (JSContact cards), read only"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -18,6 +18,8 @@ tokio = { version = "1", features = ["rt"] }
 # One source per library, pinned to the landed main heads (rev AND version, licence gate). fs-types is the rev that
 # fs-interfaces and fs-objects use (722d3ce0), so there is ONE copy of `PersonRef` (a different rev would be a second crate).
 fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "71809eaa1e974841762315c7b3187276469ec0bb", version = "0.3.0" }
+# The one JSContact card (RFC 9553) of FreeSynergy: typed model, no store, no clock (own `Error`, uid and time as parameters).
+fs-lib-jscontact = { git = "https://github.com/FreeSynergy-Net/fs-lib-jscontact", rev = "4d47badc3273b9ba8190cc5034e4477200710389", version = "0.0.1" }
 fs-objects = { git = "https://github.com/FreeSynergy-Net/fs-objects", rev = "e38093f1ec61b7c9faaa6f6046f65addb11dcf46", version = "0.0.11" }
 fs-types = { git = "https://github.com/FreeSynergy-Net/fs-types", rev = "722d3ce0156711d40cb278f2e835e865d9448290", version = "0.0.7" }
 

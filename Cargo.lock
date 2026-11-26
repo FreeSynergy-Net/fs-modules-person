@@ -586,6 +586,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "fs-lib-jscontact"
+version = "0.0.1"
+source = "git+https://github.com/FreeSynergy-Net/fs-lib-jscontact?rev=4d47badc3273b9ba8190cc5034e4477200710389#4d47badc3273b9ba8190cc5034e4477200710389"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "fs-objects"
 version = "0.0.11"
 source = "git+https://github.com/FreeSynergy-Net/fs-objects?rev=e38093f1ec61b7c9faaa6f6046f65addb11dcf46#e38093f1ec61b7c9faaa6f6046f65addb11dcf46"
@@ -611,6 +621,7 @@ version = "0.0.1"
 dependencies = [
  "async-trait",
  "fs-interfaces",
+ "fs-lib-jscontact",
  "fs-objects",
  "fs-types",
  "serde_json",

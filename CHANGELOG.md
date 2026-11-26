@@ -4,6 +4,9 @@ Version = tag.
 
 ## Unreleased
 
+- Versions in the package requirements (workflow modul-neu, K3, Controller 1; no code, no version change): `catalog/commands.json` now says `form_source_level = 2`, so the RPM gets `Requires: freesynergy-form-source >= 2` (fs-release `1ff2e850`, `package module`). New test `form_source_level.rs` keeps the declared level equal to `fs_interfaces::forms::FORM_SOURCE_LEVEL`. The three workflow callers are pinned to fs-release `1ff2e850` (`pin-refs.sh --dir`). Written with the help of Claude (Anthropic).
+- Auf Deutsch: Versionen in den Paket-Anforderungen (Workflow modul-neu, K3, Controller 1; kein Code, keine Versionsänderung): `catalog/commands.json` nennt jetzt `form_source_level = 2`, das RPM bekommt `Requires: freesynergy-form-source >= 2` (fs-release `1ff2e850`, `package module`). Neuer Test `form_source_level.rs` hält die erklärte Stufe gleich `fs_interfaces::forms::FORM_SOURCE_LEVEL`. Die drei Workflow-Aufrufe zeigen auf fs-release `1ff2e850` (`pin-refs.sh --dir`). Geschrieben mit Hilfe von Claude (Anthropic).
+
 - Pin wave 13 (only pins and lock, no code, no version change): `fs-rpc` `rev 7a656f45` (was `dba7125f`; that head moves `fs-settings` of fs-components to `08d501d9`) and the dev dependency `fs-components-mf2` `rev 08d501d9` (was `f2e90244`). `cargo tree -d` shows no fs-* twice. Written with the help of Claude (Anthropic).
 - Auf Deutsch: Pin-Welle 13 (nur Pins und Lock, kein Code, keine Versionsänderung): `fs-rpc` `rev 7a656f45` (war `dba7125f`; dieser Kopf setzt `fs-settings` aus fs-components auf `08d501d9`) und die Dev-Abhängigkeit `fs-components-mf2` `rev 08d501d9` (war `f2e90244`). `cargo tree -d` zeigt kein fs-* doppelt. Geschrieben mit Hilfe von Claude (Anthropic).
 

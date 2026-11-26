@@ -3,6 +3,7 @@
   "version": "0.0.3",
   "contract": "person",
   "scope": "own-contract",
+  "form_source_level": 2,
   "commands": [
     {
       "capability": "me.create", "call": "FormSource.invoke", "access": "write",

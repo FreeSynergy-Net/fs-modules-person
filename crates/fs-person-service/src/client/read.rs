@@ -23,7 +23,7 @@ pub async fn me_ids(source: &form_source::Client) -> Result<Vec<String>, String>
         .map_err(|e| e.to_string())?;
     let provider = hello
         .get()
-        .and_then(|h| h.get_provider())
+        .and_then(form_source::hello_results::Reader::get_provider)
         .and_then(|p| Ok(p.to_str()?.to_owned()))
         .map_err(|e| e.to_string())?;
     if provider == SAMPLE_PROVIDER {

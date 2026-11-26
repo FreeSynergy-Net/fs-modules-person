@@ -149,7 +149,7 @@ async fn the_people_are_the_ones_of_the_directory() {
 #[tokio::test]
 async fn a_diverging_copy_is_red() {
     let id = diverge("Amara Z.", |p| {
-        p.id = "01900000-0000-7000-8000-0000000000a0".parse().unwrap()
+        p.id = "01900000-0000-7000-8000-0000000000a0".parse().unwrap();
     });
     assert!(!problems(&id).await.is_empty(), "another id");
     let link = diverge("A. Zolenko", |p| p.describes = Some(iri(1)));
@@ -157,18 +157,18 @@ async fn a_diverging_copy_is_red() {
     let tariq = diverge("Tariq Lindqvist", |p| p.describes = None);
     assert!(!problems(&tariq).await.is_empty(), "Tariq as a contact");
     let name = diverge("Assistent Sol", |p| {
-        recard(p, |v| v["name"]["full"] = "Assistent Soll".into())
+        recard(p, |v| v["name"]["full"] = "Assistent Soll".into());
     });
     assert!(!problems(&name).await.is_empty(), "another name");
     let mail = diverge("Tariq Lindqvist", |p| {
         recard(p, |v| {
-            v["emails"]["e1"]["address"] = "tariq@example.org".into()
+            v["emails"]["e1"]["address"] = "tariq@example.org".into();
         });
     });
     assert!(!problems(&mail).await.is_empty(), "another address");
     let phone = diverge("Amara Zolenko", |p| {
         recard(p, |v| {
-            v["phones"]["p1"]["number"] = "tel:+4930000000".into()
+            v["phones"]["p1"]["number"] = "tel:+4930000000".into();
         });
     });
     assert!(!problems(&phone).await.is_empty(), "another phone");

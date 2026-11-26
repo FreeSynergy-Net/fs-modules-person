@@ -88,7 +88,8 @@ fn directory_card(id: ObjectId, kind: &str, n: u8) -> Value {
     }
     if emails.is_empty() {
         emails.extend(
-            sample_address(n)
+            // the profiles 2 and 3 have the address of entry 1 (directory table: "same address as 1")
+            sample_address(if matches!(n, 2 | 3) { 1 } else { n })
                 .and_then(|a| a.strip_prefix("mailto:"))
                 .map(str::to_owned),
         );

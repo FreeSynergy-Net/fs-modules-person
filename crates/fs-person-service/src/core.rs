@@ -94,7 +94,7 @@ impl<R: MeRepo + 'static> ModuleCore for PersonCore<R> {
                 self.owner.settle(&made.anchor);
                 let mut done = Applied::default();
                 done.record = made.anchor.urn();
-                done.text = (if made.new { "me-created" } else { "me-exists" }).to_owned();
+                (if made.new { "me-created" } else { "me-exists" }).clone_into(&mut done.text);
                 Ok(done)
             }
             (COMMAND_CREATE, _) => Err(refuse(

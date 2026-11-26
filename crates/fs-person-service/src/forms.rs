@@ -4,6 +4,7 @@
 //! of a call as the `Refusal` of the module contract (`fs_interfaces::module`); the wrapper adds the prefix `form-source-`.
 
 #![allow(clippy::field_reassign_with_default)] // `Refusal` is `#[non_exhaustive]`: built by Default plus assignment
+#![allow(clippy::result_large_err)] // `Refusal` is the one refusal type of the contract `ModuleCore`
 
 use fs_interfaces::forms::parse_key;
 use fs_interfaces::module::{Refusal, Value};

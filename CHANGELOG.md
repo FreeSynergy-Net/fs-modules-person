@@ -2,6 +2,11 @@
 
 Version = tag.
 
+## 0.0.2
+
+- `me.create` is now on the capability list; the host no longer refuses the module once it pins fs-interfaces 92dbb53e. Pins (no other code): `fs-interfaces` `rev 92dbb53e` (was `2354f440`) and `fs-rpc` `rev c0cbf7ad` (branch `unreviewed/wave9-fs-rpc`, was `6e80162a`). New test `tests/commands_known.rs`: every command key of `catalog/commands.json` must be well-formed and on the list (`fs_interfaces::capabilities::is_known`); it turns red for an invented key. `cargo tree -d` shows no fs-* twice, no `[patch]`. Written with the help of Claude (Anthropic).
+- Auf Deutsch: `me.create` steht jetzt auf der Fähigkeitenliste; der Host lehnt das Modul nicht mehr ab, sobald es fs-interfaces 92dbb53e pinnt. Pins (sonst kein Code): `fs-interfaces` `rev 92dbb53e` (war `2354f440`) und `fs-rpc` `rev c0cbf7ad` (Zweig `unreviewed/wave9-fs-rpc`, war `6e80162a`). Neuer Test `tests/commands_known.rs`: jeder Befehlsschlüssel von `catalog/commands.json` muss wohlgeformt sein und auf der Liste stehen (`fs_interfaces::capabilities::is_known`); er wird bei einem erfundenen Schlüssel rot. `cargo tree -d` zeigt kein fs-* doppelt, kein `[patch]`. Geschrieben mit Hilfe von Claude (Anthropic).
+
 ## 0.0.1
 
 - Pin wave 8 (only pins and lock, no code): `fs-interfaces` `rev 2354f440` (was `71809eaa`; `Action.at`, appended only) and `fs-rpc` `rev 6e80162a` (was `cde5b025`; its graph has one `fs-settings` at fs-components `bd170fa0`). The callers `check.yml`, `release.yml`, `windows.yml` now call fs-release `baae80b4` (via `pin-refs.sh --dir`, hard `check-pin-chain`). `cargo tree -d` shows no fs-* twice, no `[patch]`. Written with the help of Claude (Anthropic).

@@ -8,9 +8,10 @@
   <project_license>MIT OR Apache-2.0</project_license>
   <url type="homepage">https://github.com/FreeSynergy-Net/fs-modules-person</url>
   <custom>
-    <value key="fs:provides">person@0.0.1</value>
+    <value key="fs:provides">person@0.0.2</value>
   </custom>
   <releases>
+    <release version="0.0.2"/>
     <release version="0.0.1"/>
   </releases>
 </component>

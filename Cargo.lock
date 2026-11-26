@@ -623,10 +623,20 @@ dependencies = [
  "fs-interfaces",
  "fs-lib-jscontact",
  "fs-objects",
+ "fs-person-directory",
  "fs-types",
  "serde_json",
  "tempfile",
  "tokio",
+]
+
+[[package]]
+name = "fs-person-directory"
+version = "0.3.0"
+source = "git+https://github.com/FreeSynergy-Net/fs-interfaces?rev=71809eaa1e974841762315c7b3187276469ec0bb#71809eaa1e974841762315c7b3187276469ec0bb"
+dependencies = [
+ "async-trait",
+ "fs-types",
 ]
 
 [[package]]

@@ -46,6 +46,7 @@ async fn the_list_shows_people_with_state_and_one_value_per_column() {
             labels(&list),
             [
                 "A. Zolenko",
+                "Amara Z.",
                 "Amara Zolenko",
                 "Assistent Sol",
                 "Mr. John Q. Public, Esq.",
@@ -53,7 +54,7 @@ async fn the_list_shows_people_with_state_and_one_value_per_column() {
                 "Tariq Lindqvist"
             ]
         );
-        assert_eq!(list.total, Some(6));
+        assert_eq!(list.total, Some(7));
         assert_eq!(list.next, "");
         assert!(
             list.may.is_empty() && list.rows.iter().all(|r| r.1.is_empty()),
@@ -62,9 +63,11 @@ async fn the_list_shows_people_with_state_and_one_value_per_column() {
         let states: Vec<_> = list.rows.iter().map(|r| field(r, "state")).collect();
         assert_eq!(
             states,
-            ["me", "me", "account", "contact", "account", "contact"]
+            [
+                "contact", "me", "me", "account", "contact", "account", "account"
+            ]
         );
-        let amara = &list.rows[1];
+        let amara = &list.rows[2];
         assert_eq!(
             all(amara, "emails"),
             ["amara@example.org"],
@@ -75,10 +78,13 @@ async fn the_list_shows_people_with_state_and_one_value_per_column() {
             field(amara, "media"),
             "https://example.org/sample/amara.jpg"
         );
-        let tariq = &list.rows[5];
-        assert_eq!(field(tariq, "organizations"), "Tamarind Works Ltd");
-        assert_eq!(field(tariq, "titles"), "Research Scientist");
-        assert_eq!(field(&list.rows[3], "nicknames"), "Johnny");
+        let tariq = &list.rows[6];
+        assert_eq!(field(tariq, "label"), "Tariq Lindqvist");
+        assert_eq!(all(tariq, "phones"), ["tel:+493023125002"]);
+        let john = &list.rows[4];
+        assert_eq!(field(john, "nicknames"), "Johnny");
+        assert_eq!(field(john, "organizations"), "Example Inc.");
+        assert_eq!(field(john, "titles"), "Research Scientist");
         for row in &list.rows {
             for path in ["uid", "prodId", "name", "notes"] {
                 assert!(all(row, path).is_empty(), "{path} is not a column");
@@ -100,7 +106,7 @@ async fn pages_with_a_cursor_join_to_the_list_and_never_show_a_group() {
                 .unwrap();
             assert_eq!(
                 p.total,
-                Some(6),
+                Some(7),
                 "the total counts the listed people, not the page"
             );
             joined.extend(p.rows.iter().map(|r| r.0.clone()));
@@ -111,7 +117,7 @@ async fn pages_with_a_cursor_join_to_the_list_and_never_show_a_group() {
             assert_eq!(p.rows.len(), 2);
             cursor = p.next;
         }
-        assert_eq!((joined.len(), pages), (6, 3));
+        assert_eq!((joined.len(), pages), (7, 4));
         assert_eq!(
             joined,
             whole.rows.iter().map(|r| r.0.clone()).collect::<Vec<_>>()
@@ -198,11 +204,11 @@ async fn the_single_record_repeats_the_values_of_a_field() {
             junk.to_string().contains("form-source-unknown-scope"),
             "{junk}"
         );
-        // the group card is no row of the list but a record of its own id
+        // the group card (directory entry 5) is no row of the list but a record of its own id
         let group = page_with(
             &source,
             FORM_RECORD,
-            "urn:uuid:01900000-0000-7000-8000-000000000007",
+            "urn:uuid:00000000-0000-7000-8000-000000000005",
             "",
             0,
         )

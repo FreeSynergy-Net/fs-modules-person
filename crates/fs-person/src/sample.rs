@@ -11,7 +11,7 @@ use fs_objects::{ObjectId, Result};
 use crate::sample_data::{sample_anchor, sample_profiles};
 use crate::{Anchor, Created, MeRepo, PersonRepo, Profile, ProfileRepo};
 
-/// The sample data as a repository: "me" is Amara Zolenko, the profiles are the ten of [`sample_profiles`].
+/// The sample data as a repository: "me" is Amara Zolenko, the profiles are the eleven of [`sample_profiles`].
 pub struct SampleRepo {
     anchor: Anchor,
     /// In the order of the stores: by name (case-insensitive), ties by id.

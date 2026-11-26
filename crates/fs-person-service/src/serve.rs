@@ -20,7 +20,17 @@ use crate::service::PersonService;
 /// `Control.version` and for the data folder `modules/person`.
 pub const PROGRAM: &str = "person";
 
-const USAGE: &str = "fs-person-service [serve] [--socket PATH] [--data DIR] [--instance DOMAIN] [--sample]\nDefaults: $XDG_RUNTIME_DIR/freesynergy/person.sock, $XDG_DATA_HOME/freesynergy/modules/person\nServes the form source of the module person (forms me, rows, single-record; command me.create); nobody names an actor, the connection (same user) only decides who may call.\n--sample serves fixed test data instead of the store (for frontends and tests; the same rights, hello says fake).";
+const USAGE: &str = "fs-person-service [serve] [--socket PATH] [--data DIR] [--instance DOMAIN] [--sample]\nDefaults: $XDG_RUNTIME_DIR/freesynergy/person.sock (person-sample.sock with --sample), $XDG_DATA_HOME/freesynergy/modules/person\nServes the form source of the module person (forms me, rows, single-record; command me.create); nobody names an actor, the connection (same user) only decides who may call.\n--sample serves fixed test data instead of the store (for frontends and tests; the same rights, hello says fake, its own socket person-sample.sock).";
+
+/// The name of the sample service for its socket (`$XDG_RUNTIME_DIR/freesynergy/person-sample.sock`): another file than the one of the
+/// real module, so the sample "me" is never found where the real "me" is looked for.
+pub const SAMPLE_PROGRAM: &str = "person-sample";
+
+/// The socket name of the service: the real one, or the sample one.
+#[must_use]
+pub const fn socket_program(sample: bool) -> &'static str {
+    if sample { SAMPLE_PROGRAM } else { PROGRAM }
+}
 
 /// There is no `--actor`: the words that name one are refused with the reason (fs-rpc would take it; this module does not).
 ///
@@ -70,7 +80,7 @@ fn take_sample(args: Vec<OsString>) -> (bool, Vec<OsString>) {
 pub fn serve_with(args: impl IntoIterator<Item = OsString>, err: &mut dyn Write) -> i32 {
     let (sample, args) = take_sample(words(args));
     let options = reject_actor(args.iter().map(OsString::as_os_str))
-        .and_then(|()| ServerOptions::parse(PROGRAM, args));
+        .and_then(|()| ServerOptions::parse(socket_program(sample), args));
     let options = match options {
         Ok(Some(options)) => options,
         Ok(None) => {

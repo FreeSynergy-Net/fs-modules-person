@@ -25,7 +25,7 @@ mod serve;
 mod service;
 
 #[cfg(feature = "client")]
-pub use client::{PersonServiceOwner, service_program};
+pub use client::{PersonServiceOwner, me_ids, service_program};
 pub use core::PersonCore;
 pub use forms::{
     COMMAND_CREATE, FORM_ME, FORM_RECORD, FORM_ROWS, LEVEL, PAGE_MAX, PROVIDER, SCOPE_ALL,
@@ -33,5 +33,5 @@ pub use forms::{
 pub use owner::Owner;
 pub use rows::{MEDIA, me_record, profile_record, profile_records, record_fields, state_word};
 pub use rules::{NO_CONNECTION, NOT_A_PERSON, NOT_THE_OWNER, PersonRules};
-pub use serve::{PROGRAM, reject_actor, serve_command, serve_with};
+pub use serve::{PROGRAM, SAMPLE_PROGRAM, reject_actor, serve_command, serve_with, socket_program};
 pub use service::PersonService;

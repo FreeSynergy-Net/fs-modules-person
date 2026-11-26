@@ -19,7 +19,7 @@ fn object_of(p: &Profile) -> StoredObject {
     StoredObject::new(e, CONTENT_TYPE, p.card.to_value())
 }
 
-/// A store with the anchor of the sample and its ten profiles.
+/// A store with the anchor of the sample and its eleven profiles.
 async fn seeded() -> PersonStore<TursoStore> {
     let repo = PersonStore(TursoStore::open_in_memory().await.unwrap());
     let anchor = sample_anchor();
@@ -61,7 +61,7 @@ async fn all_pages<R: ProfileRepo>(repo: &R, limit: usize) -> (Vec<String>, usiz
 
 /// Group, organisation, place and device are no people; an AI (`application`) is.
 #[tokio::test]
-async fn the_list_holds_the_six_people_in_name_order() {
+async fn the_list_holds_the_seven_people_in_name_order() {
     let repo = seeded().await;
     let whole = list_page(&repo, 0, 100).await.unwrap();
     assert!(whole.next.is_none());
@@ -69,6 +69,7 @@ async fn the_list_holds_the_six_people_in_name_order() {
         names(&whole.profiles),
         [
             "A. Zolenko",
+            "Amara Z.",
             "Amara Zolenko",
             "Assistent Sol",
             "Mr. John Q. Public, Esq.",
@@ -76,10 +77,10 @@ async fn the_list_holds_the_six_people_in_name_order() {
             "Tariq Lindqvist"
         ]
     );
-    assert_eq!(list_total(&repo).await.unwrap(), 6);
+    assert_eq!(list_total(&repo).await.unwrap(), 7);
     assert_eq!(
         repo.count().await.unwrap(),
-        10,
+        11,
         "the four others are stored, only not listed"
     );
     assert!(
@@ -96,16 +97,16 @@ async fn the_list_holds_the_six_people_in_name_order() {
 async fn pages_of_any_size_join_to_the_whole_list() {
     let repo = seeded().await;
     let (whole, _) = all_pages(&repo, 100).await;
-    assert_eq!(whole.len(), 6);
-    for (limit, pages) in [(1, 6), (2, 3), (3, 2), (4, 2), (6, 1)] {
+    assert_eq!(whole.len(), 7);
+    for (limit, pages) in [(1, 7), (2, 4), (3, 3), (4, 2), (7, 1)] {
         let (joined, n) = all_pages(&repo, limit).await;
         assert_eq!(joined, whole, "limit {limit}");
         assert_eq!(n, pages, "limit {limit}");
     }
-    let first = list_page(&repo, 0, 3).await.unwrap();
+    let first = list_page(&repo, 0, 4).await.unwrap();
     assert_eq!(
         first.next,
-        Some(3),
+        Some(4),
         "right after Assistent Sol, the device is the next stored card"
     );
 }
@@ -114,7 +115,7 @@ async fn pages_of_any_size_join_to_the_whole_list() {
 #[tokio::test]
 async fn the_sample_is_in_the_order_of_the_store_and_always_the_same() {
     let (store, sample, again) = (seeded().await, SampleRepo::new(), SampleRepo::new());
-    for (offset, limit) in [(0, 10), (0, 3), (3, 3), (9, 5), (10, 5)] {
+    for (offset, limit) in [(0, 11), (0, 3), (3, 3), (9, 5), (11, 5)] {
         let (a, b) = (
             store.page(offset, limit).await.unwrap(),
             sample.page(offset, limit).await.unwrap(),
@@ -122,7 +123,7 @@ async fn the_sample_is_in_the_order_of_the_store_and_always_the_same() {
         assert_eq!(a, b, "{offset}+{limit}");
         assert_eq!(b, again.page(offset, limit).await.unwrap());
     }
-    assert_eq!(sample.count().await.unwrap(), 10);
+    assert_eq!(sample.count().await.unwrap(), 11);
     assert_eq!(sample.me().await.unwrap(), Some(sample_anchor()));
     // nothing is made: the sample is "me" already
     let made = sample.create_me().await.unwrap();

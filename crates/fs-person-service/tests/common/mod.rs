@@ -178,7 +178,7 @@ pub fn all<'a>(row: &'a Row, name: &str) -> Vec<&'a str> {
         .collect()
 }
 
-/// A store with the sample anchor and the ten sample profiles of `fs_person::sample_profiles` (written the way a person would).
+/// A store with the sample anchor and the eleven sample profiles of `fs_person::sample_profiles` (written the way a person would).
 pub async fn seeded() -> Repo {
     use fs_objects::{By, Envelope, Store, StoredObject, Write};
     use fs_person::{CONTENT_TYPE, MeRepo, PROFILE_TYPE, sample_anchor, sample_profiles};

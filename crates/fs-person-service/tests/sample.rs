@@ -85,7 +85,7 @@ async fn ask(asker: Asker) -> Seen {
 async fn the_sample_serves_the_forms_and_says_it_is_sample_data() {
     let a = ask(Asker::Owner).await;
     assert_eq!(a.provider, SAMPLE_PROVIDER);
-    assert_eq!((a.list.len(), a.one, a.me), (6, 1, 1));
+    assert_eq!((a.list.len(), a.one, a.me), (7, 1, 1));
     let b = ask(Asker::Owner).await;
     assert_eq!(a.list, b.list, "the same ids on every run");
 }
@@ -108,8 +108,8 @@ async fn the_sample_list_is_the_list_of_a_store_with_the_sample() {
         .await;
     let ids: Vec<_> = from_store.iter().map(|r| r.0.clone()).collect();
     assert_eq!(ids, ask(Asker::Owner).await.list);
-    assert_eq!(field(&from_store[1], "label"), "Amara Zolenko");
-    assert_eq!(all(&from_store[1], "emails"), ["amara@example.org"]);
+    assert_eq!(field(&from_store[2], "label"), "Amara Zolenko");
+    assert_eq!(all(&from_store[2], "emails"), ["amara@example.org"]);
 }
 
 /// The sample is no way round the rights: a bot and a connection for another person see nothing of it.

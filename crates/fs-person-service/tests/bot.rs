@@ -61,7 +61,7 @@ async fn a_bot_sees_nothing_and_with_lax_rules_it_would() {
                 .await
                 .unwrap();
                 if lax {
-                    assert_eq!(list.rows.len(), 6, "AllowAll lets the bot read");
+                    assert_eq!(list.rows.len(), 7, "AllowAll lets the bot read");
                     assert_eq!(known.rows.len(), 1);
                 } else {
                     for shown in [&list, &known, &unknown] {

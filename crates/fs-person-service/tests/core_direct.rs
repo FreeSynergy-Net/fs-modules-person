@@ -69,13 +69,8 @@ async fn the_core_is_narrower_than_the_contract_and_says_so() {
         .await
         .unwrap_err();
     assert_eq!((taken.kind.as_str(), taken.status), ("not-revertible", 422));
-    assert!(
-        core.changes(&cx, ChangesQuery::default())
-            .await
-            .unwrap()
-            .changes
-            .is_empty()
-    );
+    let none = core.changes(&cx, ChangesQuery::default()).await.unwrap();
+    assert_eq!(none.changes.len(), 0);
     let blob = core.blob(&cx, "r", "f").await.unwrap_err();
     assert_eq!(blob.kind, "unsupported");
     let form = core.page(&cx, query("rows@1.0.0")).await.unwrap_err();

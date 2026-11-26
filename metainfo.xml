@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="addon">
+  <id>net.freesynergy.modules.Person</id>
+  <extends>net.freesynergy.Starter</extends>
+  <name>Person</name>
+  <summary>FreeSynergy module person: the one person of an installation and its profiles as a service</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT OR Apache-2.0</project_license>
+  <url type="homepage">https://github.com/FreeSynergy-Net/fs-modules-person</url>
+  <custom>
+    <value key="fs:provides">person@0.0.1</value>
+  </custom>
+  <releases>
+    <release version="0.0.1"/>
+  </releases>
+</component>

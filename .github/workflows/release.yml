@@ -1,0 +1,24 @@
+# Release of the module `person` on a version tag (fs-release caller, pinned): ONE arch RPM `fs-module-person` (kind module).
+name: release
+on:
+  push: { tags: ["v*"] }
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+  packages: write
+jobs:
+  release:
+    uses: FreeSynergy-Net/fs-release/.github/workflows/release.yml@6798dba142edccc4aaab574b346c833998198764
+    with:
+      kind: module
+      # `name` is the HOST module name (RPM = fs-module-person), not the repo name; `binaries` is exactly the one service.
+      name: person
+      binaries: fs-person-service
+      cargo-package: fs-person-service
+      # No second binary exists (the sample data is the flag `--sample` of the one service); a test variant would be listed here and never shipped.
+      macos: false
+      windows-targets: ""
+    secrets:
+      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

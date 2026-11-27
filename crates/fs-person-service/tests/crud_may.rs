@@ -20,7 +20,7 @@ use fs_person_service::{
 async fn the_list_offers_new_even_when_empty_and_change_and_delete_per_record() {
     connected!(source, repo, {
         let empty = page_with(source, FORM_ROWS, "", "", 10).await.unwrap();
-        assert!(empty.rows.is_empty());
+        assert_eq!(empty.rows.len(), 0, "an empty database has no rows");
         assert_eq!(empty.may, [COMMAND_PROFILE_CREATE]);
         let made = create(source, &[("name", "Ada")]).await;
         assert!(!made.failed, "{made:?}");

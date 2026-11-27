@@ -74,7 +74,7 @@ async fn the_anchor_is_not_deletable() {
         for id in [me.urn(), me.id.to_string()] {
             let a = invoke(source, COMMAND_DELETE, "", &[("id", &id)]).await;
             refused(&a, "form-source-rejected");
-            assert!(a.record.is_empty());
+            assert_eq!(a.record.len(), 0, "no record in the answer");
         }
         assert_eq!(repo.me().await.unwrap(), Some(me));
         assert!(repo.get(id_of(&p.record)).await.unwrap().is_some());

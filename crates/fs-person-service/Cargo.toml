@@ -22,8 +22,8 @@ client = ["dep:uuid"]
 [dependencies]
 fs-person = { path = "../fs-person", version = "0.0.3" }
 # One source per library, the same as fs-person and the planning module (rev AND version, licence gate).
-fs-rpc = { git = "https://github.com/FreeSynergy-Net/fs-rpc", rev = "bfcb9d374a09489bac2d08b077ba81d51d47785c", version = "0.1.4" }
-fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "92dbb53e9c9ea2c48e85a27712f0456f2a7b8161", version = "0.3.0" }
+fs-rpc = { git = "https://github.com/FreeSynergy-Net/fs-rpc", rev = "ec43363a6ffcfae9044f9b03a9ce291563c1b9a3", version = "0.1.4" } # PROVISIONAL: branch head unreviewed/pin-interfaces-1eb7daae; re-pin to fs-rpc main after it lands
+fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "1eb7daae7a1edb9e3f70fba7267d91cf8955a34f", version = "0.3.0" }
 fs-objects = { git = "https://github.com/FreeSynergy-Net/fs-objects", rev = "e38093f1ec61b7c9faaa6f6046f65addb11dcf46", version = "0.0.11" }
 capnp = "0.27"
 capnp-rpc = "0.27"
@@ -40,7 +40,7 @@ name = "sample_client"
 required-features = ["client"]
 
 [dev-dependencies]
-fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "92dbb53e9c9ea2c48e85a27712f0456f2a7b8161", version = "0.3.0", features = ["fake"] }
+fs-interfaces = { git = "https://github.com/FreeSynergy-Net/fs-interfaces", rev = "1eb7daae7a1edb9e3f70fba7267d91cf8955a34f", version = "0.3.0", features = ["fake"] }
 serde_json = "1"
 tempfile = "3"
 uuid = "1"

@@ -41,3 +41,23 @@ impl<S: Store> ProfileRepo for PersonStore<S> {
 }
 
 impl<S: Store> PersonRepo for PersonStore<S> {}
+
+#[async_trait]
+impl<S: Store> crate::ProfileWrite for PersonStore<S> {
+    async fn create_profile(&self, by: &fs_objects::By, new: crate::NewProfile) -> Result<Profile> {
+        crate::profile_write::create_in(&self.0, by, new).await
+    }
+
+    async fn update_profile(
+        &self,
+        by: &fs_objects::By,
+        id: ObjectId,
+        patch: crate::ProfilePatch,
+    ) -> Result<Option<Profile>> {
+        crate::profile_write::update_in(&self.0, by, id, patch).await
+    }
+
+    async fn delete_profile(&self, by: &fs_objects::By, id: ObjectId) -> Result<bool> {
+        crate::profile_write::delete_in(&self.0, by, id).await
+    }
+}

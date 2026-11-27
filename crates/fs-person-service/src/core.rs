@@ -3,9 +3,9 @@
 //!
 //! Pattern: Template Method (steps) – this delivers only `page` and `blob` (no image or file field); the order
 //! check -> change -> report stands once in `Guarded<PersonCore>`. Adapter: the port [`PersonRepo`] (the anchor and the profiles)
-//! as the records of `catalog/forms.json` (`pages.rs`, `rows.rs`). Deviation: `apply` knows only `me.create` (it takes no argument:
+//! as the records of `catalog/forms.json` (`pages.rs`, `rows.rs`). Deviation: `apply` knows `me.create` (it takes no argument:
 //! nobody names an actor, the log names the anchor as the actor of its own birth); `revert` answers `not-revertible` (the one
-//! birth is not taken back) and `changes` is empty, and there is no feed; the profiles are read only (nothing writes them).
+//! birth is not taken back) and `changes` is empty, and there is no feed; the three profile commands (`commands.rs`) make, change and delete profiles, and `revert` of them is `not-revertible` too (no change is logged for taking back).
 //! Rights are asked by `Guarded` (`rules.rs`) and, once more before any read of the store, by `pages::refused`; the actor is the
 //! connection, never an argument.
 
@@ -20,6 +20,7 @@ use fs_interfaces::module::{
 };
 use fs_person::PersonRepo;
 
+use crate::commands::{self, COMMAND_DELETE, COMMAND_PROFILE_CREATE, COMMAND_UPDATE};
 use crate::forms::{COMMAND_CREATE, LEVEL, PROVIDER, broken, no_args, refuse, served};
 use crate::owner::Owner;
 use crate::pages::{page_of, refused};
@@ -105,7 +106,7 @@ impl<R: PersonRepo + 'static> ModuleCore for PersonCore<R> {
         ))
     }
 
-    async fn apply(&self, _cx: &Context, c: Invocation) -> Result<Applied, Refusal> {
+    async fn apply(&self, cx: &Context, c: Invocation) -> Result<Applied, Refusal> {
         match (c.command.as_str(), c.record.as_deref().unwrap_or("")) {
             (COMMAND_CREATE, "") => {
                 no_args(&c.args)?;
@@ -116,6 +117,9 @@ impl<R: PersonRepo + 'static> ModuleCore for PersonCore<R> {
                 400,
                 format!("{COMMAND_CREATE} is about the set, not about a record"),
             )),
+            (COMMAND_PROFILE_CREATE, _) => commands::create(&*self.repo, cx, &c).await,
+            (COMMAND_UPDATE, _) => commands::update(&*self.repo, cx, &c).await,
+            (COMMAND_DELETE, _) => commands::delete(&*self.repo, cx, &c).await,
             (other, _) => Err(refuse(
                 "unknown-command",
                 404,

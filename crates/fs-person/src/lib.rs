@@ -6,7 +6,7 @@
 //! are adapters that can be exchanged. [`StoreOwner`] hands the anchor to everybody
 //! who needs the local owner. [`Row`] is a projection of a profile for the list.
 //!
-//! Profiles are read only here (names, addresses, links to accounts). There is never a second person next to the anchor.
+//! Profiles are written by [`ProfileWrite`] (make, change, delete a contact) and read by [`ProfileRepo`]. There is never a second person next to the anchor.
 
 mod anchor;
 mod catalog_file;
@@ -19,6 +19,7 @@ mod person_store;
 mod preferred;
 mod profile;
 mod profile_store;
+mod profile_write;
 mod profiles;
 mod repo;
 mod row;
@@ -37,6 +38,7 @@ pub use person_store::PersonStore;
 pub use preferred::{COLUMNS, preferred};
 pub use profile::{CONTENT_TYPE, Profile, TYPE as PROFILE_TYPE, UNLISTED_KINDS};
 pub use profile_store::StoreProfiles;
+pub use profile_write::{NewProfile, ProfilePatch, ProfileWrite};
 pub use profiles::ProfileRepo;
 pub use repo::{Created, MeRepo};
 pub use row::{Row, State};

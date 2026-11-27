@@ -78,3 +78,28 @@ impl PersonRepo for SampleRepo {
         true
     }
 }
+
+/// The sample data is fixed: nothing is made, changed or deleted (the service refuses before it asks, this is the second lock).
+#[async_trait]
+impl crate::ProfileWrite for SampleRepo {
+    async fn create_profile(&self, _: &fs_objects::By, _: crate::NewProfile) -> Result<Profile> {
+        Err(read_only())
+    }
+
+    async fn update_profile(
+        &self,
+        _: &fs_objects::By,
+        _: ObjectId,
+        _: crate::ProfilePatch,
+    ) -> Result<Option<Profile>> {
+        Err(read_only())
+    }
+
+    async fn delete_profile(&self, _: &fs_objects::By, _: ObjectId) -> Result<bool> {
+        Err(read_only())
+    }
+}
+
+fn read_only() -> fs_objects::Error {
+    fs_objects::Error::Invalid("the sample data is read only".into())
+}

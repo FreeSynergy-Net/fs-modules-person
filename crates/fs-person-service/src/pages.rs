@@ -84,7 +84,7 @@ async fn rows_page<R: PersonRepo + ?Sized>(repo: &R, q: &PageQuery) -> Result<Pa
 }
 
 /// The id of a profile a scope names: `urn:uuid:<uuid>` (as in the rows) or the bare UUID.
-fn profile_id(scope: &str) -> Option<ObjectId> {
+pub(crate) fn profile_id(scope: &str) -> Option<ObjectId> {
     scope
         .strip_prefix("urn:uuid:")
         .unwrap_or(scope)

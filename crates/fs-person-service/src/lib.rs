@@ -16,6 +16,7 @@
 mod bootstrap;
 #[cfg(feature = "client")]
 mod client;
+mod commands;
 mod core;
 mod forms;
 mod owner;
@@ -27,6 +28,7 @@ mod service;
 
 #[cfg(feature = "client")]
 pub use client::{PersonServiceOwner, me_ids, service_program};
+pub use commands::{COMMAND_DELETE, COMMAND_PROFILE_CREATE, COMMAND_UPDATE, DESCRIBES_ME};
 pub use core::PersonCore;
 pub use forms::{
     COMMAND_CREATE, FORM_ME, FORM_RECORD, FORM_ROWS, FORM_TILES, LEVEL, PAGE_MAX, PROVIDER,

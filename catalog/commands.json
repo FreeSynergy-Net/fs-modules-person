@@ -9,6 +9,33 @@
       "capability": "me.create", "call": "FormSource.invoke", "access": "write",
       "params": [],
       "help": { "topic": "person-me-create", "text": { "en": "Create the one person of this installation (the anchor). The service already does this at its first start, so the command is for the case that \"me\" is missing; it is not needed after a normal start. If it exists, the same person is answered and nothing is written. Nobody can name an actor: there is no argument; the log names the new person (the anchor) as the actor of its own birth. The connection only decides who may call (the same user).", "de": "Legt die eine Person dieser Installation an (den Anker). Der Dienst tut das schon bei seinem ersten Start; der Befehl gilt also für den Fall, dass \"me\" fehlt, und ist nach einem normalen Start nicht nötig. Gibt es sie schon, kommt dieselbe Person zurueck und nichts wird geschrieben. Niemand kann einen Akteur nennen: es gibt kein Argument; im Protokoll steht die neue Person (der Anker) als Akteur ihrer eigenen Geburt. Die Verbindung entscheidet nur, wer rufen darf (derselbe Benutzer)." } }
+    },
+    {
+      "capability": "person.profile.create", "call": "FormSource.invoke", "access": "write",
+      "params": [
+        { "path": "name", "type": "text", "required": true },
+        { "path": "email", "type": "text" },
+        { "path": "phone", "type": "text" },
+        { "path": "describes", "type": "text" }
+      ],
+      "help": { "topic": "person-profile-create", "text": { "en": "Create a profile, a contact card without an account (a profile is never a person). The name is required; e-mail and phone are optional; describes=me makes it the profile of the one person of this installation. The answer is the id of the new profile (urn:uuid:...). Who may call is the owner, the same as for me.create.", "de": "Legt ein Profil an, eine Kontaktkarte ohne Konto (ein Profil ist nie eine Person). Der Name ist Pflicht; E-Mail und Telefon sind frei; describes=me macht es zum Profil der einen Person dieser Installation. Die Antwort ist die Id des neuen Profils (urn:uuid:...). Rufen darf der Eigentuemer, wie bei me.create." } }
+    },
+    {
+      "capability": "person.update", "call": "FormSource.invoke", "access": "write",
+      "params": [
+        { "path": "id", "type": "text" },
+        { "path": "name", "type": "text" },
+        { "path": "email", "type": "text" },
+        { "path": "phone", "type": "text" }
+      ],
+      "help": { "topic": "person-update", "text": { "en": "Change a profile: the fields that are given are set, the others stay. An empty e-mail or phone removes it (only the first e-mail and the first phone are the field here); a name cannot be empty. Without id the profile that describes me is meant (none or several is refused). At least one field is needed. The sample data is read only.", "de": "Aendert ein Profil: die genannten Felder werden gesetzt, die anderen bleiben. Eine leere E-Mail oder ein leeres Telefon entfernt sie (hier ist nur die erste E-Mail und das erste Telefon das Feld); ein Name darf nicht leer sein. Ohne id ist das Profil gemeint, das mich beschreibt (keines oder mehrere wird abgelehnt). Mindestens ein Feld ist noetig. Die Beispieldaten sind nur lesbar." } }
+    },
+    {
+      "capability": "person.delete", "call": "FormSource.invoke", "access": "delete",
+      "params": [
+        { "path": "id", "type": "text", "required": true }
+      ],
+      "help": { "topic": "person-delete", "text": { "en": "Delete a profile by its id. The one person of this installation (me) is never deleted: that is refused with its reason. The sample data is read only.", "de": "Loescht ein Profil anhand seiner Id. Die eine Person dieser Installation (ich) wird nie geloescht: das wird mit Begruendung abgelehnt. Die Beispieldaten sind nur lesbar." } }
     }
   ]
 }

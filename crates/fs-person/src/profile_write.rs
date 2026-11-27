@@ -224,9 +224,10 @@ pub(crate) async fn update_in<S: Store + ?Sized>(
     object.envelope.name = profile.card.display_name();
     object.content = profile.card.to_value();
     let changed = Profile::from_object(&object)?;
+    // written with the revision that was read: a change by someone else in between is not overwritten (no lost update)
     let write = Write::Put {
+        expect: Some(object.rev),
         object,
-        expect: None,
     };
     done(store.write_by(by, vec![write]).await?)?;
     Ok(Some(changed))

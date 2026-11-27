@@ -5,7 +5,9 @@
 //! twice is refused with its reason, before anything is written. The wire name of a command is its capability key. The actor is the
 //! connection (`Context::person`), never an argument; whether the caller may is asked by `Guarded` (`PersonRules`) before `apply`.
 //! Deviation: none. A profile is never a person: `person.delete` refuses the anchor ("me") with its reason, and `person.update`
-//! without an `id` means the one profile that describes "me" (none or several is told, never guessed).
+//! without an `id` means the one profile that describes "me" (none or several is told, never guessed). `person.update` and
+//! `person.delete` take the profile as `Invocation.record` or as the argument `id` (as `task.edit` takes the uid); both with
+//! different values is `bad-arguments`. `person.profile.create` is about the set: no record.
 
 #![allow(clippy::result_large_err)] // `Refusal` is the one refusal type of the contract `ModuleCore`
 
@@ -16,7 +18,8 @@ use fs_objects::{By, ObjectId};
 use fs_person::{NewProfile, PersonRepo, Profile, ProfilePatch};
 use fs_types::BasicValue as _;
 
-use crate::forms::{PAGE_MAX, broken, refuse};
+use crate::forms::{broken, refuse};
+use crate::mine::{describing_me, mine};
 use crate::pages::profile_id;
 
 /// `person.profile.create`: a profile (a contact without an account); the answer is its id.
@@ -55,14 +58,8 @@ fn text_args(args: &[Value], allowed: &[&str]) -> Result<BTreeMap<String, String
     Ok(got)
 }
 
-/// All three commands are about the set (the id is an argument), and none of them knows a compare-and-set yet.
-fn set_level(c: &Invocation) -> Result<(), Refusal> {
-    if c.record.as_deref().is_some_and(|r| !r.is_empty()) {
-        return Err(bad(format!(
-            "{} is about the set, the profile is the argument `id`, not the record",
-            c.command
-        )));
-    }
+/// None of the commands knows a compare-and-set yet: an `expect` is refused, never silently dropped.
+fn no_expect(c: &Invocation) -> Result<(), Refusal> {
     if c.expect.is_some() {
         return Err(refuse(
             "unsupported",
@@ -74,6 +71,30 @@ fn set_level(c: &Invocation) -> Result<(), Refusal> {
         ));
     }
     Ok(())
+}
+
+/// `person.profile.create` is about the set: the new profile has no record yet.
+fn set_level(c: &Invocation) -> Result<(), Refusal> {
+    if c.record.as_deref().is_some_and(|r| !r.is_empty()) {
+        return Err(bad(format!(
+            "{} is about the set: `record` must be empty",
+            c.command
+        )));
+    }
+    no_expect(c)
+}
+
+/// The profile `update` and `delete` mean: the `record` or the argument `id` (the same profile, urn or bare id); both with different
+/// values, or an unreadable one, is `bad-arguments`; none is `None`.
+fn target(c: &Invocation, got: &mut BTreeMap<String, String>) -> Result<Option<ObjectId>, Refusal> {
+    no_expect(c)?;
+    let given = |t: Option<String>| t.filter(|t| !t.is_empty());
+    let record = given(c.record.clone()).map(|t| id_of(&t)).transpose()?;
+    let arg = given(got.remove("id")).map(|t| id_of(&t)).transpose()?;
+    match (record, arg) {
+        (Some(r), Some(a)) if r != a => Err(bad("`record` and `id` name different profiles")),
+        (r, a) => Ok(r.or(a)),
+    }
 }
 
 /// A write needs the store to have its owner: the anchor is born first (`me.create`, or the start of the service).
@@ -136,13 +157,21 @@ pub(crate) async fn create<R: PersonRepo + ?Sized>(
     }
     let describes = match got.remove("describes").as_deref() {
         None | Some("") => None,
-        Some(DESCRIBES_ME) => Some(
-            repo.me()
+        Some(DESCRIBES_ME) => {
+            let me = repo
+                .me()
                 .await
                 .map_err(|e| broken(&e))?
-                .ok_or_else(|| refuse("unknown-record", 404, "\"me\" is not created yet"))?
-                .urn(),
-        ),
+                .ok_or_else(|| refuse("unknown-record", 404, "\"me\" is not created yet"))?;
+            if !describing_me(repo).await?.is_empty() {
+                return Err(refuse(
+                    "rejected",
+                    422,
+                    "a profile already describes \"me\": change it (person.update) instead of making a second one",
+                ));
+            }
+            Some(me.urn())
+        }
         Some(other) => {
             return Err(bad(format!(
                 "`describes` takes only {DESCRIBES_ME:?}, not {other:?}"
@@ -164,47 +193,6 @@ pub(crate) async fn create<R: PersonRepo + ?Sized>(
     Ok(made(&profile, "profile-created"))
 }
 
-/// The one profile that describes "me": none or several is refused, the caller names the `id`.
-async fn mine<R: PersonRepo + ?Sized>(repo: &R) -> Result<ObjectId, Refusal> {
-    let me = repo
-        .me()
-        .await
-        .map_err(|e| broken(&e))?
-        .ok_or_else(|| refuse("unknown-record", 404, "\"me\" is not created yet"))?;
-    let urn = me.urn();
-    let mut found = Vec::new();
-    let mut from = 0;
-    loop {
-        let page = repo
-            .page(from, PAGE_MAX as usize)
-            .await
-            .map_err(|e| broken(&e))?;
-        let n = page.len();
-        found.extend(
-            page.iter()
-                .filter(|p| p.describes.as_deref() == Some(urn.as_str()))
-                .map(|p| p.id),
-        );
-        if n < PAGE_MAX as usize {
-            break;
-        }
-        from += n;
-    }
-    match found.as_slice() {
-        [one] => Ok(*one),
-        [] => Err(refuse(
-            "unknown-record",
-            404,
-            "no profile describes \"me\" yet: create one with describes=me",
-        )),
-        _ => Err(refuse(
-            "conflict",
-            409,
-            "several profiles describe \"me\": name the `id`",
-        )),
-    }
-}
-
 /// `person.update`: `id` (none = the profile of "me") and at least one of `name`, `email`, `phone`; empty `email` or `phone` removes it.
 pub(crate) async fn update<R: PersonRepo + ?Sized>(
     repo: &R,
@@ -212,7 +200,7 @@ pub(crate) async fn update<R: PersonRepo + ?Sized>(
     c: &Invocation,
 ) -> Result<Applied, Refusal> {
     let mut got = text_args(&c.args, &UPDATE_ARGS)?;
-    set_level(c)?;
+    let target = target(c, &mut got)?;
     let patch = ProfilePatch {
         name: got.remove("name"),
         email: got.remove("email"),
@@ -224,12 +212,8 @@ pub(crate) async fn update<R: PersonRepo + ?Sized>(
     if patch.name.as_deref().is_some_and(|n| n.trim().is_empty()) {
         return Err(bad("`name` is empty: a profile needs a name"));
     }
-    let id = match got.remove("id").as_deref() {
-        None | Some("") => None,
-        Some(text) => Some(id_of(text)?),
-    };
     writable(repo)?;
-    let id = match id {
+    let id = match target {
         Some(id) => id,
         None => mine(repo).await?,
     };
@@ -248,11 +232,7 @@ pub(crate) async fn delete<R: PersonRepo + ?Sized>(
     c: &Invocation,
 ) -> Result<Applied, Refusal> {
     let mut got = text_args(&c.args, &DELETE_ARGS)?;
-    set_level(c)?;
-    let id = match got.remove("id").as_deref() {
-        None | Some("") => return Err(bad("`id` is missing")),
-        Some(text) => id_of(text)?,
-    };
+    let id = target(c, &mut got)?.ok_or_else(|| bad("`id` (or the record) is missing"))?;
     if let Some(me) = repo.me().await.map_err(|e| broken(&e))?
         && me.id == id
     {

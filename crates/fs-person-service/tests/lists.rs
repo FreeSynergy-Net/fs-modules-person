@@ -10,7 +10,10 @@ use common::{Repo, Shown, all, field, page_with, seeded, serve_service};
 use fs_interfaces::formsource_capnp::form_source;
 use fs_objects::{Query, Store};
 use fs_person::{MeRepo, sample_anchor, sample_profiles};
-use fs_person_service::{FORM_RECORD, FORM_ROWS, PersonService, record_fields};
+use fs_person_service::{
+    COMMAND_DELETE, COMMAND_PROFILE_CREATE, COMMAND_UPDATE, FORM_RECORD, FORM_ROWS, PersonService,
+    record_fields,
+};
 use tokio::task::LocalSet;
 
 const FIRST: &str = "urn:uuid:01900000-0000-7000-8000-000000000001"; // Amara Zolenko (describes me)
@@ -56,9 +59,16 @@ async fn the_list_shows_people_with_state_and_one_value_per_column() {
         );
         assert_eq!(list.total, Some(7));
         assert_eq!(list.next, "");
+        assert_eq!(
+            list.may,
+            [COMMAND_PROFILE_CREATE],
+            "the owner may make a profile"
+        );
         assert!(
-            list.may.is_empty() && list.rows.iter().all(|r| r.1.is_empty()),
-            "nothing writes, nothing is offered"
+            list.rows
+                .iter()
+                .all(|r| r.1 == [COMMAND_UPDATE, COMMAND_DELETE]),
+            "the owner may change and delete each profile"
         );
         let states: Vec<_> = list.rows.iter().map(|r| field(r, "state")).collect();
         assert_eq!(

@@ -90,26 +90,49 @@ pub async fn invoke(
     record: &str,
     pairs: &[(&str, &str)],
 ) -> Answer {
-    let mut request = source.invoke_request();
-    {
-        let mut p = request.get();
-        p.set_command(command);
-        p.set_record(record);
-        let mut args = p.init_args(u32::try_from(pairs.len()).unwrap());
-        for (i, (k, v)) in pairs.iter().enumerate() {
-            let mut a = args.reborrow().get(u32::try_from(i).unwrap());
-            a.set_path(k);
-            a.set_text(v);
-        }
+    invoke_expect(source, command, record, pairs, "").await
+}
+
+/// One call that also sends `expect` (the revision the caller saw; empty = none, then it is plain `invoke`, else `invokeIf`).
+pub async fn invoke_expect(
+    source: &form_source::Client,
+    command: &str,
+    record: &str,
+    pairs: &[(&str, &str)],
+    expect: &str,
+) -> Answer {
+    macro_rules! run {
+        ($request:ident, |$q:ident| $set:expr) => {{
+            {
+                let mut p = $request.get();
+                p.set_command(command);
+                p.set_record(record);
+                let mut args = p.reborrow().init_args(u32::try_from(pairs.len()).unwrap());
+                for (i, (k, v)) in pairs.iter().enumerate() {
+                    let mut a = args.reborrow().get(u32::try_from(i).unwrap());
+                    a.set_path(k);
+                    a.set_text(v);
+                }
+                let $q = &mut p;
+                let () = $set;
+            }
+            let answer = $request.send().promise.await.unwrap();
+            let answer = answer.get().unwrap();
+            let text = |r: capnp::Result<capnp::text::Reader<'_>>| r.unwrap().to_string().unwrap();
+            Answer {
+                failed: answer.get_failed(),
+                kind: text(answer.get_problem().unwrap().get_type()),
+                record: text(answer.get_result().unwrap().get_record()),
+                text: text(answer.get_result().unwrap().get_text()),
+            }
+        }};
     }
-    let answer = request.send().promise.await.unwrap();
-    let answer = answer.get().unwrap();
-    let text = |r: capnp::Result<capnp::text::Reader<'_>>| r.unwrap().to_string().unwrap();
-    Answer {
-        failed: answer.get_failed(),
-        kind: text(answer.get_problem().unwrap().get_type()),
-        record: text(answer.get_result().unwrap().get_record()),
-        text: text(answer.get_result().unwrap().get_text()),
+    if expect.is_empty() {
+        let mut request = source.invoke_request();
+        run!(request, |_q| ())
+    } else {
+        let mut request = source.invoke_if_request();
+        run!(request, |q| q.set_expect(expect))
     }
 }
 

@@ -19,6 +19,7 @@ mod client;
 mod commands;
 mod core;
 mod forms;
+mod mine;
 mod owner;
 mod pages;
 mod rows;

@@ -12,6 +12,7 @@ use fs_interfaces::module::{Context, HiddenReason, Page, PageQuery, Refusal, Rig
 use fs_objects::ObjectId;
 use fs_person::{Anchor, PersonRepo, list_page, list_total};
 
+use crate::commands::{COMMAND_DELETE, COMMAND_PROFILE_CREATE, COMMAND_UPDATE};
 use crate::forms::{PAGE_MAX, SCOPE_ALL, Served, broken, refuse};
 use crate::rows::{me_record, profile_record, profile_records};
 
@@ -78,9 +79,22 @@ async fn rows_page<R: PersonRepo + ?Sized>(repo: &R, q: &PageQuery) -> Result<Pa
     let total = list_total(repo).await.map_err(|e| broken(&e))?;
     let mut page = Page::default();
     page.records = profile_records(&listing.profiles, me.as_ref());
+    offer(repo, &mut page);
     page.total = u64::try_from(total).ok();
     page.next = listing.next.map(|n| n.to_string()).unwrap_or_default();
     Ok(page)
+}
+
+/// What this module offers on a page: a new profile on the set, change and delete on every record. The wrapper (`Guarded`) strikes
+/// what the person may not do; the sample data is read only, so it offers nothing.
+fn offer<R: PersonRepo + ?Sized>(repo: &R, page: &mut Page) {
+    if repo.is_sample() {
+        return;
+    }
+    page.may = vec![COMMAND_PROFILE_CREATE.to_owned()];
+    for record in &mut page.records {
+        record.may = vec![COMMAND_UPDATE.to_owned(), COMMAND_DELETE.to_owned()];
+    }
 }
 
 /// The id of a profile a scope names: `urn:uuid:<uuid>` (as in the rows) or the bare UUID.
@@ -104,6 +118,7 @@ async fn record_page<R: PersonRepo + ?Sized>(repo: &R, scope: &str) -> Result<Pa
         .iter()
         .map(|p| profile_record(p, me.as_ref()))
         .collect();
+    offer(repo, &mut page);
     page.total = Some(u64::from(!page.records.is_empty()));
     Ok(page)
 }
